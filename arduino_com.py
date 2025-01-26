@@ -2,7 +2,7 @@
 import pyfirmata
 
 # Global variables for Arduino control
-board = pyfirmata.Arduino('ACM0')
+board = pyfirmata.Arduino('ACM0y')
 it = pyfirmata.util.Iterator(board)
 it.start()
 
