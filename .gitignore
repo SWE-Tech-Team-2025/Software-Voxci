@@ -7,6 +7,9 @@ logs
 .fleet
 .idea
 
+# Python venv
+.venv
+
 # Local env files
 .env
 .env.*
@@ -19,4 +22,3 @@ logs
 .env.development.local
 .env.test.local
 .env.production.local
-.venv
