@@ -3,6 +3,7 @@
 Desktop App for communicating with the testing device via connection to an ESP32
 
 # Extra steps outlined by web dev:
+
 Install instructions on Windows:
 Bring up command pallet (ctrl + shift + p in VSCode)
 Use existing venv for Python
@@ -10,6 +11,7 @@ Test this using 'which python' checking to see that the path leads to the reposi
 Use poetry add to add dependencies for the venv to run the Python app
 
 # Python Packages needed:
+
 python-dotenv
 pymongo
 fastapi(standard)
