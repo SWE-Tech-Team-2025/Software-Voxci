@@ -3,19 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="/src/styles.css" rel="stylesheet" />
-  </head>
+    <link href="/src/index.css" rel="stylesheet" /> <!-- Update this path if needed -->
+  </head> 
   <body>
-    <h1 class="text-3xl font-bold underline">Hello world!</h1>
-    <button
-      class="bg-sky-700 px-4 py-2 text-white hover:bg-sky-800 sm:px-8 sm:py-3"
-    >
-      Submit
-    </button>
-    <button
-      class="text-white px-4 sm:px-8 py-2 sm:py-3 bg-sky-700 hover:bg-sky-800"
-    >
-      Submit
-    </button>
+    <div id="root"></div> <!-- React will mount here -->
+    <script type="module" src="/src/main.jsx"></script> <!-- Load React app -->
   </body>
 </html>
