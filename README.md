@@ -1,11 +1,11 @@
 # SWE Tech Team Software!
 
-Desktop App for communicating with the testing device via connection to an ESP32
+Desktop App for communicating with the testing device via connection to an ESP32 via sockets
 
 # Extra steps outlined by web dev:
 
 Install instructions on Windows:
-Bring up command pallet (ctrl + shift + p in VSCode)
+Bring up command pallet (ctrl + shift + p in VSCode) or type in source and then the path to the Python in the venv
 Use existing venv for Python
 Test this using 'which python' checking to see that the path leads to the repository path
 Use poetry add to add dependencies for the venv to run the Python app
@@ -15,6 +15,10 @@ Use poetry add to add dependencies for the venv to run the Python app
 python-dotenv
 pymongo
 fastapi(standard)
+pydantic
+pymongo
+python-dotenv
+xlsxwriter
 
 Need to get poetry installed if you haven't already
 

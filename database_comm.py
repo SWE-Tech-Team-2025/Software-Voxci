@@ -75,10 +75,10 @@ class DataBaseComm:
     def delete_die(die_id: str):
         return {"Hello": "World"}
 
-# Example of searching the database for a specific object or field
-# print(collection.insert_one({"name" : "Samantha"}))
-for die in collection.find({"name" : "Samantha"}):
-    print(die)
+    # Example of searching the database for a specific object or field
+    # print(collection.insert_one({"name" : "Samantha"}))
+    for die in collection.find({"name" : "Samantha"}):
+        print(die)
 
 class CreateDieInput(BaseModel):
     id: str
