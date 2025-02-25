@@ -1,7 +1,9 @@
-from WiFiCommunicator import WiFiCommunicator
+from esp32_wifi_communicator import WiFiCommunicator
+from database_comm import DataBaseCom
 
-# Global Variables
-curr_chip_id = 0
-communicator = WiFiCommunicator(max_buffer_sz=128)
+def main():
+    curr_chip_id = 0
+    communicator = WiFiCommunicator(max_buffer_sz=128)
+    database_comm = DataBaseComm()
 
  

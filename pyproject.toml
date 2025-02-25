@@ -11,6 +11,7 @@ fastapi = {extras = ["standard"], version = "^0.115.8"}
 pymongo = "^4.11.1"
 python-dotenv = "^1.0.1"
 xlsxwriter = "^3.2.2"
+dotenv = "^0.9.9"
 
 
 [build-system]
