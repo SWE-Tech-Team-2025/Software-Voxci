@@ -15,4 +15,4 @@ class Exporter:
     '''
     def __init__(self, chip_id: int) -> None:
         self.chip_id = chip_id
-        workbook = xlsxwriter.Workbook('hello.xlsx')
+        self.workbook = xlsxwriter.Workbook('hello.xlsx')
