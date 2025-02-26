@@ -14,5 +14,5 @@ class Exporter:
     to get data from the database from a specific die
     '''
     def __init__(self, chip_id: int) -> None:
-        self.chip_id = chip_id
+        chip_id = chip_id
         workbook = xlsxwriter.Workbook('hello.xlsx')
