@@ -1,42 +1,124 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Beige Tan Background */
+body {
+  background-color: #f5f5dc; /* Beige tan */
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
 
+/* App Container */
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Blue Bar at the Top */
+.top-bar {
+  background-color: #007bff; /* Blue */
+  height: 60px;
+  width: 100%;
+  position: fixed; /* Fix the bar at the top */
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: flex-end; /* Align logo to the right */
+  align-items: center;
+  padding-right: 20px; /* Add some padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  z-index: 1000; /* Ensure the bar is above other content */
+}
+
+/* Logo */
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  height: 40px; /* Adjust size as needed */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Spacer for the Top Bar */
+.top-bar-spacer {
+  height: 60px; /* Same height as the top bar */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Main Content */
+.content {
+  display: flex;
+  flex: 1; /* Fill the remaining space */
+  padding: 1rem;
 }
 
-.card {
-  padding: 2em;
+/* Left Panel */
+.left-panel {
+  flex: 1;
+  padding: 1rem;
+  max-width: 400px;
 }
 
-.read-the-docs {
-  color: #888;
+.left-panel h1 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* Light Blue Box */
+.input-box {
+  background-color: #e6f7ff; /* Light blue background */
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.input-box h2 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* Input Container */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-container label {
+  font-weight: bold;
+  color: #555;
+}
+
+.input-container input[type="range"] {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.input-container input[type="number"],
+.input-container input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.input-container input::placeholder {
+  color: #999; /* Grey placeholder text */
+}
+
+/* Start Button */
+.input-container button {
+  padding: 0.5rem 1rem;
+  background-color: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.input-container button:hover {
+  background-color: #535bf2;
+}
+
+/* Graph Container */
+.graph-container {
+  flex: 2;
+  padding: 1rem;
 }
