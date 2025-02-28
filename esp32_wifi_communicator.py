@@ -9,8 +9,11 @@ class InMessage:
     Incoming Message definition
     NOTE: This is created so that you can add as many flags as you want,
     without changing the interface, and you'd only need to chance the decoding method
+    Iniltializes incoming messages from the ESP32 to be added to the incoming message queue
+    @param data: the value of the value read by the testing device
+    @param client_addr: The address of the ESP32
     '''
-    def __init__(self, data: float, require_ack: bool, client_addr: str) -> None:
+    def __init__(self, data, require_ack: bool, client_addr: str) -> None:
         self.data = data
         self.require_acknowledgment = require_ack
         self.client_addr = client_addr
@@ -21,9 +24,20 @@ class OutMessage:
     Outgoing Message definition
     NOTE: This is created so that you can add as many flags as you want,
     without changing the interface, and you'd only need to chance the encoding method
+    Initializes the outgoing message for the ESP32 to be added to the outgoing message queue
+    @param type_of_message: true for voltage range, false for voltage increment value
     '''
-    def __init__(self, data: float, require_ack: bool = False) -> None:
+    def __init__(self, data, type_of_message: bool, require_ack: bool = False) -> None:
         self.data = data
+
+class StartStopTestMsg:
+    '''
+    Initializes a special type of outgoing message to tell the ESP32 to start/stop the tests as needed.
+    @param data: true starts the test, false stops
+    '''
+    def __init__(self, data: bool, require_ack: bool = False) -> None:
+        self.data = data
+        self.require_ack = require_ack
 
 
 class WiFiCommunicator:
@@ -32,7 +46,7 @@ class WiFiCommunicator:
     ACKNOWLEDGMENT_FLAG = 'A'
     CPU_RELEASE_SLEEP = 0.000_001
 
-    def __init__(self, max_buffer_sz: int, port: int = 11111, in_queue_sz: int = 0, out_queue_sz: int = 0) -> None:
+    def __init__(self, max_buffer_sz: int, port: int = 11111, in_queue_sz: int = 0, out_queue_sz: int = 0, start_stop_queue_sz: int = 0) -> None:
         '''
         @param max_buffer_sz: The maximum amount of bytes to be received at once
         @param port: The port on which we shall communicate
@@ -42,6 +56,7 @@ class WiFiCommunicator:
         assert max_buffer_sz > 0, f"Buffer size must be > 0 [{max_buffer_sz = }]"
         assert in_queue_sz >= 0, f"Queue size can't be negative [{in_queue_sz = }]"
         assert out_queue_sz >= 0, f"Queue size can't be negative [{out_queue_sz = }]"
+        assert start_stop_queue_sz >= 0, f"Queue size can't be negative [{start_stop_queue_sz = }]"
         
         # Signal to the communicator to "Rest In Peace"
         self._rip = False
@@ -51,6 +66,7 @@ class WiFiCommunicator:
         self._max_buffer_size = max_buffer_sz
         self._incoming_messages_queue = Queue(maxsize=in_queue_sz)
         self._outgoing_messages_queue = Queue(maxsize=out_queue_sz)
+        self._start_stop_messages_queu = Queue(maxsize=start_stop_queue_sz)
 
         # Client info
         self._client = None
@@ -83,8 +99,16 @@ class WiFiCommunicator:
     def send_message(self, message: OutMessage) -> None:
         '''
         Adds a message to the sending queue to be sent
+        @param message: The message to be sent to the ESP32
         '''
         self._outgoing_messages_queue.put(message)
+        
+    def send_start_stop(self, message: StartStopTestMsg) -> None:
+        '''
+        Tells the ESP32 to start or stop the tests
+        @param message: The start/stop message to be sent to the ESP32
+        '''
+        self.start_stop_queue.put(message)
 
     def destroy(self):
         '''
