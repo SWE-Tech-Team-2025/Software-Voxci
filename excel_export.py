@@ -1,13 +1,18 @@
-import database_comm
+# import database_comm
 import xlsxwriter
 
-class Exporter:
+workbook = xlsxwriter.Workbook('hello.xlsx')
+worksheet = workbook.add_worksheet()
+worksheet.write('A1', 'Hello world')
+workbook.close()
 
-    '''
-    Class definition for the Excel Exporter. 
-    TODO: Complete code based off example code and complete
-    based on our use case. 
-    '''
+# class Exporter:
+    
+#     '''
+#     Class definition for the Excel Exporter. 
+#     TODO: Complete code based off example code and complete
+#     based on our use case. 
+#     '''
 
     '''
     TODO: Finish initializer to get all the variables and/or communicators
@@ -15,4 +20,4 @@ class Exporter:
     '''
     def __init__(self, chip_id: int) -> None:
         self.chip_id = chip_id
-        self.workbook = xlsxwriter.Workbook('hello.xlsx')
+        workbook = xlsxwriter.Workbook('hello.xlsx')
