@@ -6,4 +6,5 @@ def main():
     communicator = WiFiCommunicator(max_buffer_sz=128)
     database_comm = DataBaseComm()
 
- 
+def run():
+    

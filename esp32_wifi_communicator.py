@@ -66,7 +66,7 @@ class WiFiCommunicator:
         self._max_buffer_size = max_buffer_sz
         self._incoming_messages_queue = Queue(maxsize=in_queue_sz)
         self._outgoing_messages_queue = Queue(maxsize=out_queue_sz)
-        self._start_stop_messages_queu = Queue(maxsize=start_stop_queue_sz)
+        self._start_stop_messages_queue = Queue(maxsize=start_stop_queue_sz)
 
         # Client info
         self._client = None
@@ -124,6 +124,7 @@ class WiFiCommunicator:
     def __wait_for_connection_thread(self, soc: socket.socket) -> None:
         '''
         Establish a connection with a client, and die
+        @param soc: socket to use to establish communication with
         '''
         self._client, self._client_address = soc.accept()
         self._have_client = True
@@ -131,6 +132,7 @@ class WiFiCommunicator:
     def __decode(self, in_bytes: bytes) -> 'None|InMessage':
         '''
         Decodes the incoming message to the required format
+        @param in_bytes: The bytes that make up the message to decode
         '''
         message = in_bytes.decode()
         if not len(message):
@@ -156,6 +158,7 @@ class WiFiCommunicator:
     def __encode(self, message: OutMessage) -> bytes:
         '''
         Encodes the outgoing message into the required sendable format
+        @param message: The message to encode
         '''
         return message.data.encode()
 
