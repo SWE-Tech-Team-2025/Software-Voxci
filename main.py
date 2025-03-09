@@ -1,5 +1,5 @@
 from esp32_wifi_communicator import WiFiCommunicator
-from database_comm import DataBaseCom
+from database_comm import DataBaseComm
 
 def main():
     curr_chip_id = 0
