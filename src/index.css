@@ -66,3 +66,8 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+/* Graph Container */
+.graph-container {
+  flex: 2;
+  padding: 1rem;
+}

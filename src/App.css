@@ -149,3 +149,25 @@ body {
   flex: 2;
   padding: 1rem;
 }
+
+/*export to excel*/ 
+.graph-button {
+  display: block;
+  margin: 20px auto; /* Center the button */
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.graph-button:hover {
+  background-color: #0056b3;
+}
+
+.graph-button:active {
+  transform: scale(0.98);
+}

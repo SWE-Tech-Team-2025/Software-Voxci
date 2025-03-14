@@ -97,6 +97,7 @@ function App() {
     console.log("Selected Time:", time);
   };
 
+
   return (
     <div className="App">
       {/* Blue Bar at the Top */}
@@ -206,6 +207,9 @@ function App() {
               },
             }}
           />
+          {/*import to excel button */ }
+          <button className="graph-button">Export to Excel
+          </button>
         </div>
       </div>
     </div>
