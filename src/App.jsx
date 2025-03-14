@@ -208,7 +208,7 @@ function App() {
             }}
           />
           {/*import to excel button */ }
-          <button className="graph-button">Export to Excel
+          <button className="graph-button">View Excel File
           </button>
         </div>
       </div>
