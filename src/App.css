@@ -101,6 +101,33 @@ body {
   color: #999; /* Grey placeholder text */
 }
 
+/* Time Picker */
+.time-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-picker select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333; /* Ensure text is visible */
+  cursor: pointer;
+}
+
+.time-picker select:hover {
+  border-color: #888;
+}
+
+.time-picker select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
 /* Start Button */
 .input-container button {
   padding: 0.5rem 1rem;

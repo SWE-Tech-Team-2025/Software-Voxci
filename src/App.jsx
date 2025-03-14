@@ -27,7 +27,9 @@ function App() {
   // State for frequency (Hz), voltage (V), and time (HH:MM:SS)
   const [frequency, setFrequency] = useState(100); // Default frequency in Hz
   const [voltage, setVoltage] = useState(100); // Default voltage in V
-  const [time, setTime] = useState("00:00:00"); // Default time in HH:MM:SS
+  const [hours, setHours] = useState("00"); // Default hours
+  const [minutes, setMinutes] = useState("00"); // Default minutes
+  const [seconds, setSeconds] = useState("00"); // Default seconds
   const [graphData, setGraphData] = useState({
     labels: [], // X-axis: Voltage
     datasets: [
@@ -50,24 +52,31 @@ function App() {
     setVoltage(parseFloat(event.target.value));
   };
 
-  // Handle time change
-  const handleTimeChange = (event) => {
-    const { value } = event.target;
-    // Automatically jump between colons
-    if (value.length === 2 || value.length === 5) {
-      setTime(value + ":");
-    } else {
-      setTime(value);
-    }
+  // Handle hours change
+  const handleHoursChange = (event) => {
+    setHours(event.target.value);
+  };
+
+  // Handle minutes change
+  const handleMinutesChange = (event) => {
+    setMinutes(event.target.value);
+  };
+
+  // Handle seconds change
+  const handleSecondsChange = (event) => {
+    setSeconds(event.target.value);
   };
 
   // Handle Start button click
   const handleStart = () => {
     // Validate inputs
-    if (!frequency || !voltage || !time) {
+    if (!frequency || !voltage || !hours || !minutes || !seconds) {
       alert("Please fill in all fields.");
       return;
     }
+
+    // Combine hours, minutes, and seconds into a single time string
+    const time = `${hours}:${minutes}:${seconds}`;
 
     // Generate a range of voltage values (e.g., from 0 to 2 * voltage)
     const voltageRange = Array.from({ length: 20 }, (_, i) => (i * voltage) / 10); // 20 points from 0 to 2 * voltage
@@ -83,6 +92,9 @@ function App() {
         },
       ],
     });
+
+    // Log the selected time for debugging
+    console.log("Selected Time:", time);
   };
 
   return (
@@ -138,14 +150,34 @@ function App() {
 
               {/* Time Input */}
               <label htmlFor="time">Time (HH:MM:SS):</label>
-              <input
-                id="time"
-                type="text"
-                placeholder="00:00:00"
-                value={time}
-                onChange={handleTimeChange}
-                maxLength={8} // HH:MM:SS
-              />
+              <div className="time-picker">
+                <select id="hours" value={hours} onChange={handleHoursChange}>
+                  {/* Options for hours (00 to 23) */}
+                  {Array.from({ length: 24 }, (_, i) => (
+                    <option key={i} value={String(i).padStart(2, "0")}>
+                      {String(i).padStart(2, "0")}
+                    </option>
+                  ))}
+                </select>
+                <span>:</span>
+                <select id="minutes" value={minutes} onChange={handleMinutesChange}>
+                  {/* Options for minutes (00 to 59) */}
+                  {Array.from({ length: 60 }, (_, i) => (
+                    <option key={i} value={String(i).padStart(2, "0")}>
+                      {String(i).padStart(2, "0")}
+                    </option>
+                  ))}
+                </select>
+                <span>:</span>
+                <select id="seconds" value={seconds} onChange={handleSecondsChange}>
+                  {/* Options for seconds (00 to 59) */}
+                  {Array.from({ length: 60 }, (_, i) => (
+                    <option key={i} value={String(i).padStart(2, "0")}>
+                      {String(i).padStart(2, "0")}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               {/* Start Button */}
               <button onClick={handleStart}>Start</button>
