@@ -31,8 +31,16 @@ class DataBaseComm:
     #     print(die)
     def create_die(self, die_id : str) -> None:
         dies.insert_one({"ID" : die_id})
+
     def get_die(self, die_id : str) -> None:
         return dies.find({"ID" : die_id})
+
+    def get_die_sweeps(die_id) -> list:
+        die_sweeps_list = list()
+        for die_sweep in die_sweeps.find({"ID" : die_id}):
+            die_sweeps_list.append(die_sweep)
+        return die_sweeps_list
+
 
 # class CreateDieInput(BaseModel):
 #     id: str

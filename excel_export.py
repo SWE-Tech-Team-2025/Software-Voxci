@@ -1,4 +1,5 @@
 import database_comm
+import pymogo
 import xlsxwriter
 
 class Exporter:
