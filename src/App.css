@@ -1,9 +1,7 @@
 /* Beige Tan Background */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%; /* Ensure the body takes up the full height of the viewport */
+body {
   background-color: #f5f5dc; /* Beige tan */
+  margin: 0;
   font-family: Arial, sans-serif;
 }
 
@@ -11,12 +9,12 @@ html, body {
 .App {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure the app takes up at least the full viewport height */
+  height: 100vh;
 }
 
 /* Blue Bar at the Top */
 .top-bar {
-  background-color: #007bff80; /* Blue */
+  background-color: #007bff; /* Blue */
   height: 60px;
   width: 100%;
   position: fixed; /* Fix the bar at the top */
@@ -44,9 +42,7 @@ html, body {
 .content {
   display: flex;
   flex: 1; /* Fill the remaining space */
-  padding-top: 60px; /* Offset for the fixed header */
   padding: 1rem;
-  box-sizing: border-box; /* Ensure padding is included in height calculation */
 }
 
 /* Left Panel */
@@ -105,33 +101,6 @@ html, body {
   color: #999; /* Grey placeholder text */
 }
 
-/* Time Picker */
-.time-picker {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.time-picker select {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333; /* Ensure text is visible */
-  cursor: pointer;
-}
-
-.time-picker select:hover {
-  border-color: #888;
-}
-
-.time-picker select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
 /* Start Button */
 .input-container button {
   padding: 0.5rem 1rem;
@@ -152,6 +121,39 @@ html, body {
 .graph-container {
   flex: 2;
   padding: 1rem;
-  margin-top: 60px; /* Ensure the graph is not covered by the header */
+}
+
+.table-container {
+  margin-top: 20px;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #333; /* dark border around table*/
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+
+  tr:hover {
+    background-color: #222; 
+  }
 }
 

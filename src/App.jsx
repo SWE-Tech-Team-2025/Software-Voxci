@@ -193,9 +193,37 @@ function App() {
               },
             }}
           />
+           {/* Table for Data History */}
+        <div className="table-container">
+          <h2>Data History</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Run #</th>
+                <th>Timestamp</th>
+                <th>Frequency (Hz)</th>
+                <th>Voltage (V)</th>
+                <th>Voltage Range</th>
+                <th>Capacitance Range</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dataHistory.map((run, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{run.timestamp}</td>
+                  <td>{run.frequency}</td>
+                  <td>{run.voltage}</td>
+                  <td>{run.voltageRange.join(", ")}</td>
+                  <td>{run.capacitanceRange.join(", ")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        </div>
         </div>
       </div>
-    </div>
   );
 }
 
