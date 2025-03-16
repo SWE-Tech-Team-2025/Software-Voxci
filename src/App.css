@@ -14,7 +14,7 @@ body {
 
 /* Blue Bar at the Top */
 .top-bar {
-  background-color: #007bff; /* Blue */
+  background-color: #007bff71; /* Blue */
   height: 60px;
   width: 100%;
   position: fixed; /* Fix the bar at the top */
