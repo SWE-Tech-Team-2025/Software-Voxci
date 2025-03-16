@@ -27,7 +27,7 @@ function App() {
   // State for frequency (Hz), voltage (V), and time (HH:MM:SS)
   const [frequency, setFrequency] = useState(100); // Default frequency in Hz
   const [voltage, setVoltage] = useState(100); // Default voltage in V
-  const [hours, setHours] = useState("00"); // Default hours
+  const [hours, setHours] = useState("09"); // Default hours
   const [minutes, setMinutes] = useState("00"); // Default minutes
   const [seconds, setSeconds] = useState("00"); // Default seconds
   const [graphData, setGraphData] = useState({
@@ -96,7 +96,6 @@ function App() {
     // Log the selected time for debugging
     console.log("Selected Time:", time);
   };
-
 
   return (
     <div className="App">
@@ -207,9 +206,6 @@ function App() {
               },
             }}
           />
-          {/*import to excel button */ }
-          <button className="graph-button">View Excel File
-          </button>
         </div>
       </div>
     </div>

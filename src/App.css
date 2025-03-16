@@ -1,7 +1,9 @@
 /* Beige Tan Background */
-body {
-  background-color: #f5f5dc; /* Beige tan */
+html, body {
   margin: 0;
+  padding: 0;
+  height: 100%; /* Ensure the body takes up the full height of the viewport */
+  background-color: #f5f5dc; /* Beige tan */
   font-family: Arial, sans-serif;
 }
 
@@ -9,7 +11,7 @@ body {
 .App {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh; /* Ensure the app takes up at least the full viewport height */
 }
 
 /* Blue Bar at the Top */
@@ -42,7 +44,9 @@ body {
 .content {
   display: flex;
   flex: 1; /* Fill the remaining space */
+  padding-top: 60px; /* Offset for the fixed header */
   padding: 1rem;
+  box-sizing: border-box; /* Ensure padding is included in height calculation */
 }
 
 /* Left Panel */
@@ -148,26 +152,13 @@ body {
 .graph-container {
   flex: 2;
   padding: 1rem;
+  margin-top: 60px; /* Ensure the graph is not covered by the header */
 }
 
-/*export to excel*/ 
-.graph-button {
-  display: block;
-  margin: 20px auto; /* Center the button */
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.graph-button:hover {
-  background-color: #0056b3;
-}
-
-.graph-button:active {
-  transform: scale(0.98);
+/* Footer */
+.footer {
+  background-color: #f5f5dc; /* Match the background color */
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid #ccc; /* Optional: Add a subtle border */
 }
