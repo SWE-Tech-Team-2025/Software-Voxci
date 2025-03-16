@@ -8,7 +8,7 @@ class Main:
     database_comm = DataBaseComm()
     def new_die_test()-> str:
         curr_chip_id = uuid4()
-        database_comm.create_die()
+        database_comm.dies.create_die(curr_chip_id)
         
         return curr_chip_id
 

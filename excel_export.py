@@ -17,7 +17,7 @@ class Exporter:
     #     self.chip_id = chip_id
     #     workbook = xlsxwriter.Workbook('hello.xlsx')
 
-    def writeData(self, name, chip_id: str):
+    def write_data(self, name, chip_id: str):
 
         workbook = xlsxwriter.Workbook(name + '.xlsx')
         worksheet = workbook.add_worksheet() # can name the worksheet
