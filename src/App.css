@@ -16,7 +16,7 @@ html, body {
 
 /* Blue Bar at the Top */
 .top-bar {
-  background-color: #007bff; /* Blue */
+  background-color: #007bff80; /* Blue */
   height: 60px;
   width: 100%;
   position: fixed; /* Fix the bar at the top */
@@ -155,10 +155,3 @@ html, body {
   margin-top: 60px; /* Ensure the graph is not covered by the header */
 }
 
-/* Footer */
-.footer {
-  background-color: #f5f5dc; /* Match the background color */
-  padding: 1rem;
-  text-align: center;
-  border-top: 1px solid #ccc; /* Optional: Add a subtle border */
-}
