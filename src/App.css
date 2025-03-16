@@ -125,7 +125,7 @@ body {
 
 .table-container {
   margin-top: 20px;
-  background-color: white;
+  background-color: #e6f7ff;
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -141,12 +141,13 @@ table {
 th, td {
   padding: 8px;
   border: 1px solid #333;
-  text-align: center;
+  text-align: center; 
 }
-
+/*table header*/ 
 th {
-  background-color: #007bff;
-  color: white;
+  background-color: #007bff71;
+  color: #353535;
+  font-weight: bold;
 }
 
 tr:nth-child(even) {
