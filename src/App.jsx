@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import * as XLSX from "xlsx"; // Import the xlsx library
 import vocxiLogo from "./assets/vocxi_logo.png"; // Import the logo
 import "./App.css";
 
@@ -24,12 +25,9 @@ ChartJS.register(
 );
 
 function App() {
-  // State for frequency (Hz), voltage (V), and time (HH:MM:SS)
+  // State for frequency (Hz), voltage (V), and data history
   const [frequency, setFrequency] = useState(100); // Default frequency in Hz
   const [voltage, setVoltage] = useState(100); // Default voltage in V
-  const [hours, setHours] = useState("09"); // Default hours
-  const [minutes, setMinutes] = useState("00"); // Default minutes
-  const [seconds, setSeconds] = useState("00"); // Default seconds
   const [graphData, setGraphData] = useState({
     labels: [], // X-axis: Voltage
     datasets: [
@@ -41,6 +39,7 @@ function App() {
       },
     ],
   });
+  const [dataHistory, setDataHistory] = useState([]); // Store history of all runs
 
   // Handle frequency change (slider or input)
   const handleFrequencyChange = (event) => {
@@ -52,31 +51,13 @@ function App() {
     setVoltage(parseFloat(event.target.value));
   };
 
-  // Handle hours change
-  const handleHoursChange = (event) => {
-    setHours(event.target.value);
-  };
-
-  // Handle minutes change
-  const handleMinutesChange = (event) => {
-    setMinutes(event.target.value);
-  };
-
-  // Handle seconds change
-  const handleSecondsChange = (event) => {
-    setSeconds(event.target.value);
-  };
-
   // Handle Start button click
   const handleStart = () => {
     // Validate inputs
-    if (!frequency || !voltage || !hours || !minutes || !seconds) {
+    if (!frequency || !voltage) {
       alert("Please fill in all fields.");
       return;
     }
-
-    // Combine hours, minutes, and seconds into a single time string
-    const time = `${hours}:${minutes}:${seconds}`;
 
     // Generate a range of voltage values (e.g., from 0 to 2 * voltage)
     const voltageRange = Array.from({ length: 20 }, (_, i) => (i * voltage) / 10); // 20 points from 0 to 2 * voltage
@@ -93,8 +74,42 @@ function App() {
       ],
     });
 
-    // Log the selected time for debugging
-    console.log("Selected Time:", time);
+    // Add the current run to the data history
+    const timestamp = new Date().toLocaleString(); // Automatically generate a timestamp
+    const newRun = {
+      timestamp,
+      frequency,
+      voltage,
+      voltageRange,
+      capacitanceRange,
+    };
+    setDataHistory((prevHistory) => [...prevHistory, newRun]);
+  };
+
+  // Handle View Excel button click
+  const handleViewExcel = () => {
+    // Prepare data for the Excel file
+    const excelData = dataHistory.map((run, index) => {
+      const row = {
+        "Run #": index + 1,
+        Timestamp: run.timestamp,
+        Frequency: run.frequency,
+        Voltage: run.voltage,
+        "Voltage Range": run.voltageRange.join(", "),
+        "Capacitance Range": run.capacitanceRange.join(", "),
+      };
+      return row;
+    });
+
+    // Create a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Create a workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data History");
+
+    // Export the workbook to an Excel file
+    XLSX.writeFile(workbook, "data_history.xlsx");
   };
 
   return (
@@ -116,7 +131,7 @@ function App() {
 
           {/* Light Blue Box */}
           <div className="input-box">
-            <h2>Enter Voltage, Frequency, and Time</h2>
+            <h2>Enter Voltage and Frequency</h2>
             <div className="input-container">
               {/* Frequency Slider */}
               <label htmlFor="frequency">Frequency (Hz): {frequency}</label>
@@ -148,39 +163,11 @@ function App() {
                 onChange={handleVoltageChange}
               />
 
-              {/* Time Input */}
-              <label htmlFor="time">Time (HH:MM:SS):</label>
-              <div className="time-picker">
-                <select id="hours" value={hours} onChange={handleHoursChange}>
-                  {/* Options for hours (00 to 23) */}
-                  {Array.from({ length: 24 }, (_, i) => (
-                    <option key={i} value={String(i).padStart(2, "0")}>
-                      {String(i).padStart(2, "0")}
-                    </option>
-                  ))}
-                </select>
-                <span>:</span>
-                <select id="minutes" value={minutes} onChange={handleMinutesChange}>
-                  {/* Options for minutes (00 to 59) */}
-                  {Array.from({ length: 60 }, (_, i) => (
-                    <option key={i} value={String(i).padStart(2, "0")}>
-                      {String(i).padStart(2, "0")}
-                    </option>
-                  ))}
-                </select>
-                <span>:</span>
-                <select id="seconds" value={seconds} onChange={handleSecondsChange}>
-                  {/* Options for seconds (00 to 59) */}
-                  {Array.from({ length: 60 }, (_, i) => (
-                    <option key={i} value={String(i).padStart(2, "0")}>
-                      {String(i).padStart(2, "0")}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               {/* Start Button */}
               <button onClick={handleStart}>Start</button>
+
+              {/* View Excel Button */}
+              <button onClick={handleViewExcel}>View Excel</button>
             </div>
           </div>
         </div>
@@ -208,8 +195,6 @@ function App() {
           />
         </div>
       </div>
-
-    
     </div>
   );
 }
