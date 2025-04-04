@@ -40,15 +40,15 @@ class DataBaseComm:
         return dies.find({"ID" : die_id})
 
     # Fetches all sweeps from the database that correspond to the die id
-    def get_die_sweeps(die_id) -> list:
+    def get_die_sweeps(die_id, test_num) -> list:
         die_sweeps_list = list()
-        for die_sweep in die_sweeps.find({"ID" : die_id}):
+        for die_sweep in die_sweeps.find({"ID" : die_id, "testnum" : test_num}):
             die_sweeps_list.append(die_sweep)
         return die_sweeps_list
     
     # Creates a new sweep for the die and adds it to the database
-    def create_die_sweep(self, die_id : str, sweep_voltage : float, sweep_humidity : float, sweep_temp : float, sweep_capacitance : float) -> None:
-        new_sweep = { "ID" : die_id, "timestamp" : datetime.now(), "humidity" : sweep_humidity, "voltage" : sweep_voltage, "capacitance" : sweep_capacitance, "temp" : sweep_temp}
+    def create_die_sweep(self, die_id : str, test_num : int, sweep_voltage : float, sweep_humidity : float, sweep_temp : float, sweep_capacitance : float) -> None:
+        new_sweep = { "ID" : die_id, "testnum" : test_num , "timestamp" : datetime.now(), "humidity" : sweep_humidity, "voltage" : sweep_voltage, "capacitance" : sweep_capacitance, "temp" : sweep_temp}
         die_sweeps.insert_one(new_sweep)
 
 
