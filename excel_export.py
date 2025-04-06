@@ -25,6 +25,9 @@ class Exporter:
 
         sweeps = get_die_sweeps(chip_id, test_num)
 
+        worksheet.write('A1', 'Chip ID: ' + chip_id)
+        worksheet.write('B1', 'Test Number' + test_num)
+
         for sweep in (sweeps):
 
             # get data from database_comm
@@ -36,14 +39,14 @@ class Exporter:
 
             # data to write to worksheet
             data = (
-                ['Time', time], # replace with variable
+                ['Time', time],
                 ['Humidity', humidity],
                 ['Voltage', voltage],
                 ['Calculated Capacitance', capacitance],
                 ['Temp', temp],
             )
 
-            row = 0
+            row = 1
             col = 0
 
             # iterate over data and write it out row by row
