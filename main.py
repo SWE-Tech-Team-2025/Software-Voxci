@@ -6,7 +6,7 @@ class Main:
     curr_chip_id = "empty"
     communicator = WiFiCommunicator(max_buffer_sz=128)
     database_comm = DataBaseComm()
-    def new_die_test()-> str:
+    def new_die()-> str:
         curr_chip_id = uuid4()
         database_comm.dies.create_die(curr_chip_id)
         

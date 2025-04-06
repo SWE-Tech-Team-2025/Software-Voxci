@@ -33,11 +33,17 @@ class DataBaseComm:
     
     # Creates a die input in the database
     def create_die(self, die_id : str) -> None:
-        dies.insert_one({"ID" : die_id})
+        dies.insert_one({"ID" : die_id, "currtestnum" : 1})
 
     # Fetches a die from the database
     def get_die(self, die_id : str) -> None:
         return dies.find({"ID" : die_id})
+
+    #Increments testnum for a specific die
+    def increment_die_test(self, die_id : str) -> None:
+        die_query = {"ID" : die_id}
+        die_new_test_val = {"inc" : {"currtestnum"}}
+        dies.update_one(die_query, die_new_test_val)
 
     # Fetches all sweeps from the database that correspond to the die id
     def get_die_sweeps(die_id, test_num) -> list:
