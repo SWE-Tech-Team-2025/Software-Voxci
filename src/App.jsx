@@ -174,6 +174,7 @@ function App() {
 
         {/* Right Side: Graph */}
         <div className="graph-container">
+          <div className="graph-box">
           <Line
             data={graphData}
             options={{
@@ -193,6 +194,8 @@ function App() {
               },
             }}
           />
+          </div>
+
            {/* Table for Data History */}
         <div className="table-container">
           <h2>Data History</h2>
