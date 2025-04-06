@@ -1,5 +1,5 @@
 import database_comm
-import pymogo
+import pymongo
 import xlsxwriter
 
 class Exporter:
@@ -18,10 +18,12 @@ class Exporter:
     #     self.chip_id = chip_id
     #     workbook = xlsxwriter.Workbook('hello.xlsx')
 
-    def write_data(self, name, chip_id: str):
+    def write_data(self, name, chip_id: str, test_num: int):
 
         workbook = xlsxwriter.Workbook(name + '.xlsx')
         worksheet = workbook.add_worksheet() # can name the worksheet
+
+        sweeps = get_die_sweeps(chip_id)
 
         # get data from database_comm
         time = None
