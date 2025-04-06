@@ -17,7 +17,7 @@ body {
   background-color: #007bff71; /* Blue */
   height: 60px;
   width: 100%;
-  position: fixed; /* Fix the bar at the top */
+  position: sitcky; /* Fix the bar at the top */
   top: 0;
   left: 0;
   display: flex;
@@ -121,6 +121,10 @@ body {
 .graph-container {
   flex: 2;
   padding: 1rem;
+  display: flex; 
+  flex-direction: column;
+  overflow-y: auto; 
+  max-height: calc(100vh - 25px); 
 }
 
 .table-container {
