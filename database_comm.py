@@ -4,6 +4,14 @@ from fastapi import FastAPI
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from datetime import datetime
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from pymongo import MongoClient
+import jwt
+from jwt import encode as jwt_encode
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException
+from bson import ObjectId
 
 class DataBaseComm:
 
@@ -40,7 +48,7 @@ class DataBaseComm:
         return dies.find({"ID" : die_id})
 
     # Increments testnum for a specific die
-    def increment_die_test(self, die_id : str) -> None:
+    def increment_die_testnum(self, die_id : str) -> None:
         die_query = {"ID" : die_id}
         die_new_test_val = {"inc" : {"currtestnum"}}
         dies.update_one(die_query, die_new_test_val)
@@ -51,7 +59,7 @@ class DataBaseComm:
         return die[1]
 
     # Fetches all sweeps from the database that correspond to the die id
-    def get_die_sweeps(die_id, test_num) -> list:
+    def get_die_sweeps(self, die_id, test_num) -> list:
         die_sweeps_list = list()
         for die_sweep in die_sweeps.find({"ID" : die_id, "testnum" : test_num}):
             die_sweeps_list.append(die_sweep)

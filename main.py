@@ -12,6 +12,12 @@ class Main:
         
         return curr_chip_id
 
+    def export_Die(self) -> None:
+        
+    def create_die() -> None:
+
+    
+
     def main():
         return
 
