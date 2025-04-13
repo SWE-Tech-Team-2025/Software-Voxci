@@ -18,9 +18,9 @@ class Exporter:
     #     self.chip_id = chip_id
     #     workbook = xlsxwriter.Workbook('hello.xlsx')
 
-    def write_data(self, name, chip_id: str, test_num: int): # test_num -1 if all tests requested
+    def write_data(self, chip_id: str, test_num: int): # test_num -1 if all tests requested
 
-        workbook = xlsxwriter.Workbook(name + '.xlsx')  
+        workbook = xlsxwriter.Workbook(chip_id + '.xlsx')  
 
         if test_num == -1: # if all tests are wanted
             for i in range(test_num):
