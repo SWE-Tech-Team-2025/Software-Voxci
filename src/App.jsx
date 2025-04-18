@@ -51,46 +51,49 @@ function App() {
     setVoltage(parseFloat(event.target.value));
   };
 
-  // Handle Start button click
   const handleStart = () => {
-    // Validate inputs
     if (!frequency || !voltage) {
       alert("Please fill in all fields.");
       return;
     }
 
-    // Generate a range of voltage values (e.g., from 0 to 2 * voltage)
-    const voltageRange = Array.from({ length: 20 }, (_, i) => (i * voltage) / 10); // 20 points from 0 to 2 * voltage
-    const capacitanceRange = voltageRange.map((v) => v / frequency); // Calculate capacitance for each voltage
+    const voltageRange = Array.from({ length: 20 }, (_, i) => (i * voltage) / 10);
+    const capacitanceRange = voltageRange.map((v) => v / frequency);
 
-    // Update graph data
+    const randomColor = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
+      Math.random() * 255
+    )}, ${Math.floor(Math.random() * 255)}, 1)`;
+
     setGraphData({
-      labels: voltageRange, // X-axis: Voltage
+      labels: voltageRange,
       datasets: [
+        ...graphData.datasets,
         {
-          ...graphData.datasets[0],
-          data: capacitanceRange, // Y-axis: Capacitance
+          label: `Run ${dataHistory.length + 1} (${frequency}Hz, ${voltage}V)`,
+          data: capacitanceRange,
+          borderColor: randomColor,
+          backgroundColor: randomColor,
+          fill: false,
+          tension: 0.1,
         },
       ],
     });
 
-    // Add the current run to the data history
-    const timestamp = new Date().toLocaleString(); // Automatically generate a timestamp
+    const timestamp = new Date().toLocaleString();
     const newRun = {
       timestamp,
       frequency,
       voltage,
       voltageRange,
       capacitanceRange,
+      color: randomColor,
     };
     setDataHistory((prevHistory) => [...prevHistory, newRun]);
   };
 
-  // Handle View Excel button click
   const handleViewExcel = () => {
-    // Prepare data for the Excel file
     const excelData = dataHistory.map((run, index) => {
-      const row = {
+      return {
         "Run #": index + 1,
         Timestamp: run.timestamp,
         Frequency: run.frequency,
@@ -98,18 +101,19 @@ function App() {
         "Voltage Range": run.voltageRange.join(", "),
         "Capacitance Range": run.capacitanceRange.join(", "),
       };
-      return row;
     });
 
-    // Create a worksheet
     const worksheet = XLSX.utils.json_to_sheet(excelData);
-
-    // Create a workbook
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Data History");
-
-    // Export the workbook to an Excel file
     XLSX.writeFile(workbook, "data_history.xlsx");
+  };
+
+  const handleClearGraph = () => {
+    setGraphData({
+      labels: [],
+      datasets: [],
+    });
   };
 
   return (
@@ -135,6 +139,8 @@ function App() {
             <div className="input-container">
               {/* Frequency Slider */}
               <label htmlFor="frequency">Frequency (Hz): {frequency}</label>
+
+              {/* Frequency Input (Optional) */}
               <input
                 id="frequency"
                 type="range"
@@ -152,7 +158,6 @@ function App() {
                 value={frequency}
                 onChange={handleFrequencyChange}
               />
-
               {/* Voltage Input */}
               <label htmlFor="voltage">Voltage (V):</label>
               <input
@@ -162,12 +167,12 @@ function App() {
                 value={voltage}
                 onChange={handleVoltageChange}
               />
-
               {/* Start Button! */}
               <button onClick={handleStart}>Start</button>
 
               {/* View Excel Button */}
               <button onClick={handleViewExcel}>View Excel</button>
+              <button onClick={handleClearGraph}>Clear Graph</button>
             </div>
           </div>
         </div>
@@ -175,58 +180,58 @@ function App() {
         {/* Right Side: Graph */}
         <div className="graph-container">
           <div className="graph-box">
-          <Line
-            data={graphData}
-            options={{
-              scales: {
-                x: {
-                  title: {
-                    display: true,
-                    text: "Voltage (V)",
+            <Line
+              data={graphData}
+              options={{
+                responsive: true,
+                scales: {
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Voltage (V)",
+                    },
+                    min: 0,
+                    max: 200,
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: "Capacitance (F)",
+                    },
+                    min: 0,
+                    max: 2,
                   },
                 },
-                y: {
-                  title: {
-                    display: true,
-                    text: "Capacitance (F)",
-                  },
-                },
-              },
-            }}
-          />
+              }}
+            />
+          
+            <div className="table-container">
+              <h2>Data History</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Run #</th>
+                    <th>Timestamp</th>
+                    <th>Frequency (Hz)</th>
+                    <th>Voltage (V)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataHistory.map((run, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{run.timestamp}</td>
+                      <td>{run.frequency}</td>
+                      <td>{run.voltage}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-
-           {/* Table for Data History */}
-        <div className="table-container">
-          <h2>Data History</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Run #</th>
-                <th>Timestamp</th>
-                <th>Frequency (Hz)</th>
-                <th>Voltage (V)</th>
-                <th>Voltage Range</th>
-                <th>Capacitance Range</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dataHistory.map((run, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{run.timestamp}</td>
-                  <td>{run.frequency}</td>
-                  <td>{run.voltage}</td>
-                  <td>{run.voltageRange.join(", ")}</td>
-                  <td>{run.capacitanceRange.join(", ")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        </div>
         </div>
       </div>
+    </div>
   );
 }
 
