@@ -7,4 +7,4 @@ import uuid
 # Testing esp_32_wifi_communicator
 
 def main() -> None:
-    test_esp_comm = WiFiCommunicator(128, 11111)
+    test_esp_comm = WiFiCommunicator(128, 11111, 2, 2, 2)
