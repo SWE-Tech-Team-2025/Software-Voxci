@@ -94,8 +94,25 @@ static void receiver_task(void*){
 /*
   Task for StartStop messages
 */
-static void receiver_task(void*) {
-  
+static void st_stp_receiver_task(void*) {
+
+  xSemaphoreTake(_startstop_tsk_mutex, portMAX_DELAY);
+
+  char buf{MAX_BUFFER_LEN} = {0};
+
+  while(1) {
+
+    while(_client.available() <= 0) {
+      delay(100);
+    }
+
+    for(uint8_t i = 0; i < _client.available(); i++) {
+      buf[i] = (char)_client.read();
+    }
+
+    xQueueSend(_startstop_q, (void*)&buf, 5);
+
+  }
 }
 
 /*
@@ -120,6 +137,7 @@ void setup_wifi_communicator(){
   // release tasks
   xSemaphoreGive(_send_tsk_mutex);
   xSemaphoreGive(_recv_tsk_mutex);
+  xSemaphoreGive(_startstop_tsk_mutex);
 }
 
 #endif // __WIFI_COMMUNICATOR_H__
