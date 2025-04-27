@@ -46,7 +46,7 @@ class WiFiCommunicator:
     ACKNOWLEDGMENT_FLAG = 'A'
     CPU_RELEASE_SLEEP = 0.000_001
 
-    def __init__(self, max_buffer_sz: int, port: int = 11111, in_queue_sz: int = 0, out_queue_sz: int = 0, start_stop_queue_sz: int = 0) -> None:
+    def __init__(self, max_buffer_sz: int, port: int, in_queue_sz: int, out_queue_sz: int, start_stop_queue_sz: int) -> None:
         '''
         @param max_buffer_sz: The maximum amount of bytes to be received at once
         @param port: The port on which we shall communicate
