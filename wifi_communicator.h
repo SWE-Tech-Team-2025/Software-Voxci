@@ -121,8 +121,10 @@ static void st_stp_receiver_task(void*) {
 void setup_wifi_communicator(){
   _send_q = xQueueCreate(QUEUE_LEN, MAX_BUFFER_LEN);
   _recv_q = xQueueCreate(QUEUE_LEN, MAX_BUFFER_LEN);
+  _startstop_q = xQueueCreate(QUEUE_LEN, MAX_BUFFER_LEN);
   _recv_tsk_mutex = xSemaphoreCreateMutex();
   _send_tsk_mutex = xSemaphoreCreateMutex();
+  _startstop_tsk_mutex = xSemaphoreCreateMutex();
     
   // block both tasks once created for them to wait for the client to connect
   xSemaphoreTake(_send_tsk_mutex, portMAX_DELAY);
