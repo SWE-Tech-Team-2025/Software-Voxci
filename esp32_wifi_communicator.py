@@ -108,7 +108,7 @@ class WiFiCommunicator:
         Tells the ESP32 to start or stop the tests
         @param message: The start/stop message to be sent to the ESP32
         '''
-        self.start_stop_queue.put(message)
+        self.start_stop_messages_queue.put(message)
 
     def destroy(self):
         '''
@@ -162,14 +162,35 @@ class WiFiCommunicator:
         '''
         return message.data.encode()
 
-    def __sender_thread(self):
+    def __encode_start_stop(self, message: StartStopTestMsg) -> bytes:
         '''
+        Encodes the Start/Stop message into a special format for ESP32 to interpret
+        Let's use: 'CMD:START' or 'CMD:STOP'
+        '''
+        cmd = 'START' if message.data else 'STOP'
+        return f'CMD:{cmd}'.encode()
+
+
+    def __sender_thread(self):1
+        '''
+        Handling for outgoing messages. Handles both outgoing messages
+        and start_stop messages
         '''
         while not self._rip:
             if not self._have_client:
                 time.sleep(self.CPU_RELEASE_SLEEP)
                 continue
 
-            # This is blocking on purpose, if not, we'd have to handle getting no-data when timing-out
-            msg = self._outgoing_messages_queue.get()
-            self._client.send(self.__encode(msg))
+            # First try to get a normal message
+            try:
+                msg = self._outgoing_messages_queue.get(timeout=0.05)
+                self._client.send(self.__encode(msg))
+            except:
+                pass  # no regular message available
+
+            # Then try to get a start/stop message
+            try:
+                ss_msg = self._start_stop_messages_queue.get_nowait()
+                self._client.send(self.__encode_start_stop(ss_msg))
+            except:
+                pass  # no start/stop message available

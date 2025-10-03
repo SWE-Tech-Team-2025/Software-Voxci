@@ -10,7 +10,6 @@ class Main:
     def new_die(self)-> str:
         curr_chip_id = uuid4()
         database_comm.dies.create_die(curr_chip_id)
-        
         return curr_chip_id
 
     def export_Die(self, die_id : str, test_num : int) -> None:

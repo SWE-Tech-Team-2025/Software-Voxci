@@ -51,7 +51,7 @@ bool get_message(char *msg){
   return xQueueReceive(_recv_q, (void*)msg, 5) == pdTRUE;
 }
 
-bool stop_message(bool *msg) {
+bool get_stop_message(bool *msg) {
   return xQueueReceive(_startstop_q, (void*)msg, 5) == pdTRUE;
 }
 
@@ -98,7 +98,7 @@ static void st_stp_receiver_task(void*) {
 
   xSemaphoreTake(_startstop_tsk_mutex, portMAX_DELAY);
 
-  char buf{MAX_BUFFER_LEN} = {0};
+  char buf[MAX_BUFFER_LEN] = {0};
 
   while(1) {
 
@@ -110,7 +110,17 @@ static void st_stp_receiver_task(void*) {
       buf[i] = (char)_client.read();
     }
 
-    xQueueSend(_startstop_q, (void*)&buf, 5);
+    if (strncmp(buf, "CMD:START", 9) == 0) {
+    bool val = true;
+    xQueueSend(_startstop_q, &val, 5);
+    }
+    else if (strncmp(buf, "CMD:STOP", 8) == 0) {
+        bool val = false;
+        xQueueSend(_startstop_q, &val, 5);
+    }
+    else {
+        xQueueSend(_recv_q, &buf, 5);
+    }
 
   }
 }
