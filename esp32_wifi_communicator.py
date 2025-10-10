@@ -1,11 +1,11 @@
 import time
 import socket
 import threading
-from queue import Queue
+from queue import Queue, Empty
 
 
 class InMessage:
-    '''
+    '''3
     Incoming Message definition
     NOTE: This is created so that you can add as many flags as you want,
     without changing the interface, and you'd only need to chance the decoding method
@@ -29,6 +29,8 @@ class OutMessage:
     '''
     def __init__(self, data, type_of_message: bool, require_ack: bool = False) -> None:
         self.data = data
+        self.require_acknowledgment = require_ack
+        self.type_of_message = type_of_message
 
 class StartStopTestMsg:
     '''
@@ -45,6 +47,7 @@ class WiFiCommunicator:
     '''
     ACKNOWLEDGMENT_FLAG = 'A'
     CPU_RELEASE_SLEEP = 0.000_001
+    MESSAGE_DELIMITER = "\n"
 
     def __init__(self, max_buffer_sz: int, port: int, in_queue_sz: int, out_queue_sz: int, start_stop_queue_sz: int) -> None:
         '''
@@ -61,9 +64,8 @@ class WiFiCommunicator:
         # Signal to the communicator to "Rest In Peace"
         self._rip = False
         self._have_client = False
-
-
         self._max_buffer_size = max_buffer_sz
+        
         self._incoming_messages_queue = Queue(maxsize=in_queue_sz)
         self._outgoing_messages_queue = Queue(maxsize=out_queue_sz)
         self._start_stop_messages_queue = Queue(maxsize=start_stop_queue_sz)
@@ -108,7 +110,7 @@ class WiFiCommunicator:
         Tells the ESP32 to start or stop the tests
         @param message: The start/stop message to be sent to the ESP32
         '''
-        self.start_stop_messages_queue.put(message)
+        self._start_stop_messages_queue.put(message)
 
     def destroy(self):
         '''
@@ -160,7 +162,7 @@ class WiFiCommunicator:
         Encodes the outgoing message into the required sendable format
         @param message: The message to encode
         '''
-        return message.data.encode()
+        return (message.data + "\n").encode()
 
     def __encode_start_stop(self, message: StartStopTestMsg) -> bytes:
         '''
@@ -171,7 +173,7 @@ class WiFiCommunicator:
         return f'CMD:{cmd}'.encode()
 
 
-    def __sender_thread(self):1
+    def __sender_thread(self):
         '''
         Handling for outgoing messages. Handles both outgoing messages
         and start_stop messages
@@ -185,12 +187,12 @@ class WiFiCommunicator:
             try:
                 msg = self._outgoing_messages_queue.get(timeout=0.05)
                 self._client.send(self.__encode(msg))
-            except:
-                pass  # no regular message available
+            except Exception as e:
+                print(f"Sender - Error sending message: {e}")  # no regular message available
 
             # Then try to get a start/stop message
             try:
                 ss_msg = self._start_stop_messages_queue.get_nowait()
                 self._client.send(self.__encode_start_stop(ss_msg))
-            except:
-                pass  # no start/stop message available
+            except Exception as e:
+                print(f"Sender - Error sending start/stop message: {e}") # no start/stop message available
