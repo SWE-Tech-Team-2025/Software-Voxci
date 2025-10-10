@@ -46,6 +46,14 @@ function App() {
     setFrequency(parseFloat(event.target.value));
   };
 
+  // Handle frequency input change (small number input)
+  const handleFrequencyInputChange = (event) => {
+    const value = parseFloat(event.target.value);
+    if (!isNaN(value) && value >= 1 && value <= 1000) {
+      setFrequency(value);
+    }
+  };
+
   // Handle voltage change
   const handleVoltageChange = (event) => {
     setVoltage(parseFloat(event.target.value));
@@ -137,42 +145,56 @@ function App() {
           <div className="input-box">
             <h2>Enter Voltage and Frequency</h2>
             <div className="input-container">
-              {/* Frequency Slider */}
-              <label htmlFor="frequency">Frequency (Hz): {frequency}</label>
+              {/* Frequency Input with Slider and Small Number Input */}
+              <div className="input-group">
+                <label htmlFor="frequency" className="input-label">
+                  Frequency (Hz):
+                </label>
+                <div className="frequency-controls">
+                  <input
+                    type="number"
+                    id="frequency-input"
+                    min="1"
+                    max="1000"
+                    step="1"
+                    value={frequency}
+                    onChange={handleFrequencyInputChange}
+                    className="small-number-input"
+                  />
+                  <input
+                    id="frequency"
+                    type="range"
+                    min="1"
+                    max="1000"
+                    step="1"
+                    value={frequency}
+                    onChange={handleFrequencyChange}
+                    className="frequency-slider"
+                  />
+                </div>
+              </div>
 
-              {/* Frequency Input (Optional) */}
-              <input
-                id="frequency"
-                type="range"
-                min="1"
-                max="1000"
-                step="1"
-                value={frequency}
-                onChange={handleFrequencyChange}
-              />
-
-              {/* Frequency Input (Optional) */}
-              <input
-                type="number"
-                placeholder="Enter frequency in Hz"
-                value={frequency}
-                onChange={handleFrequencyChange}
-              />
               {/* Voltage Input */}
-              <label htmlFor="voltage">Voltage (V):</label>
-              <input
-                id="voltage"
-                type="number"
-                placeholder="Enter voltage in V"
-                value={voltage}
-                onChange={handleVoltageChange}
-              />
-              {/* Start Button! */}
-              <button onClick={handleStart}>Start</button>
-
-              {/* View Excel Button */}
-              <button onClick={handleViewExcel}>View Excel</button>
-              <button onClick={handleClearGraph}>Clear Graph</button>
+              <div className="input-group">
+                <label htmlFor="voltage" className="input-label">
+                  Voltage (V):
+                </label>
+                <input
+                  id="voltage"
+                  type="number"
+                  placeholder="Enter voltage in V"
+                  value={voltage}
+                  onChange={handleVoltageChange}
+                  className="voltage-input"
+                />
+              </div>
+              
+              {/* Buttons - Stacked Vertically */}
+              <div className="button-group">
+                <button onClick={handleStart} className="control-button">Start</button>
+                <button onClick={handleViewExcel} className="control-button">View Excel</button>
+                <button onClick={handleClearGraph} className="control-button">Clear Graph</button>
+              </div>
             </div>
           </div>
         </div>
