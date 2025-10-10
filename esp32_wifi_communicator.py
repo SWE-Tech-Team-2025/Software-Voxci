@@ -1,6 +1,7 @@
 import time
 import socket
 import threading
+import logging
 from queue import Queue, Empty
 
 
@@ -65,7 +66,7 @@ class WiFiCommunicator:
         self._rip = False
         self._have_client = False
         self._max_buffer_size = max_buffer_sz
-        
+
         self._incoming_messages_queue = Queue(maxsize=in_queue_sz)
         self._outgoing_messages_queue = Queue(maxsize=out_queue_sz)
         self._start_stop_messages_queue = Queue(maxsize=start_stop_queue_sz)
@@ -74,20 +75,23 @@ class WiFiCommunicator:
         self._client = None
         self._client_address = None
 
-        # Socket creation
-        soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Buffer for messages
+        self._buffer = ""
 
-        # To allow the ESP through the firewall (if u had firewall problems, and u're on Linux):
+        # Socket creation
+        self._soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # To allow the ESP through the firewall (If you have firewall problems on Linux):
         # $ sudo iptables -I INPUT -s ESP.IP.GOES.HERE -p tcp --dport 15000 -j ACCEPT 
-        soc.bind(('0.0.0.0', port))
-        soc.listen(0)
+        self._soc.bind(('0.0.0.0', port))
+        self._soc.listen(0)
 
         # Start the show
         self._threads = [
             threading.Thread(target=self.__listener_thread, daemon=True),
             threading.Thread(target=self.__sender_thread, daemon=True),
-            threading.Thread(target=self.__wait_for_connection_thread, daemon=True, args=[soc]),
+            threading.Thread(target=self.__wait_for_connection_thread, daemon=True, args=[self._soc]),
         ]
         for thread in self._threads:
             thread.start()
@@ -120,29 +124,38 @@ class WiFiCommunicator:
             self._client.close()
         
         self._rip = True
+        if self._soc is not None:
+            self._soc.close()
         for thread in self._threads:
             thread.join(0.1)
 
-    def __wait_for_connection_thread(self, soc: socket.socket) -> None:
+    def __wait_for_connection_thread(self) -> None:
         '''
         Establish a connection with a client, and die
         @param soc: socket to use to establish communication with
         '''
-        self._client, self._client_address = soc.accept()
-        self._have_client = True
+        while not_self._rip:
+            logging.info("Waiting for ESP32 to connect....")
+            try: 
+                self._client, self._client_address = self._soc.accept()
+                self._have_client = True
+                self._buffer = ""
+                logging.info(f"Client connected from {self._client_address}")
+            except Exception as e:
+                logging.error(f"Error accepting client: {e}")
+                time.sleep(1)
 
-    def __decode(self, in_bytes: bytes) -> 'None|InMessage':
+    def __decode(self, message: str) -> 'None|InMessage':
         '''
         Decodes the incoming message to the required format
         @param in_bytes: The bytes that make up the message to decode
         '''
-        message = in_bytes.decode()
-        if not len(message):
+        if not message:
             return None
 
-        ack = message[0] == self.ACKNOWLEDGMENT_FLAG
-        data = message[1 * ack:]
-        return InMessage(data=data, require_ack=ack, client_addr=self._client_address)
+        ack = message.startswith(self.ACKNOWLEDGMENT_FLAG)
+        data = message[1:] if ack else message
+        return InMessage(data=data, require_ack = ack, client_addr = self._client_address)
 
     def __listener_thread(self):
         '''
@@ -151,8 +164,18 @@ class WiFiCommunicator:
             if not self._have_client:
                 time.sleep(self.CPU_RELEASE_SLEEP)
                 continue
-
-            message = self._client.recv(self._max_buffer_size)
+            try: 
+                received = self._client.recv(self._max_buffer_size)
+                if not received:
+                    logging.warning("Client disconnected")
+                    self._have_client = False
+                    self.client.close()
+                    continue
+                self._buffer += received.decode()
+                while self.MESSAGE_DELIMITER in self._buffer:
+                    line, self._buffer = self._buffer.split(self.MESSAGE_DELIMITER, 1)
+                    decoded_msg = self._decode(line)
+                
             decoded_msg = self.__decode(message)
             if decoded_msg is not None:
                 self._incoming_messages_queue.put(decoded_msg)
