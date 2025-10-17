@@ -91,7 +91,7 @@ class WiFiCommunicator:
         self._threads = [
             threading.Thread(target=self.__listener_thread, daemon=True),
             threading.Thread(target=self.__sender_thread, daemon=True),
-            threading.Thread(target=self.__wait_for_connection_thread, daemon=True, args=[self._soc]),
+            threading.Thread(target=self.__wait_for_connection_thread, daemon=True),
         ]
         for thread in self._threads:
             thread.start()
@@ -120,21 +120,20 @@ class WiFiCommunicator:
         '''
         Destroy the communicator
         '''
+        self._rip = True
         if self._client is not None:
             self._client.close()
-        
-        self._rip = True
         if self._soc is not None:
             self._soc.close()
         for thread in self._threads:
-            thread.join(0.1)
+            thread.join(timeout=1)
 
     def __wait_for_connection_thread(self) -> None:
         '''
         Establish a connection with a client, and die
         @param soc: socket to use to establish communication with
         '''
-        while not_self._rip:
+        while not self._rip:
             logging.info("Waiting for ESP32 to connect....")
             try: 
                 self._client, self._client_address = self._soc.accept()
@@ -169,23 +168,27 @@ class WiFiCommunicator:
                 if not received:
                     logging.warning("Client disconnected")
                     self._have_client = False
-                    self.client.close()
+                    self._client.close()
                     continue
                 self._buffer += received.decode()
                 while self.MESSAGE_DELIMITER in self._buffer:
                     line, self._buffer = self._buffer.split(self.MESSAGE_DELIMITER, 1)
-                    decoded_msg = self._decode(line)
-                
-            decoded_msg = self.__decode(message)
-            if decoded_msg is not None:
-                self._incoming_messages_queue.put(decoded_msg)
+                    decoded_msg = self.__decode(line)
+                    if decoded_msg:
+                        self._incoming_messages_queue.put(decoded_msg)
+                        
+            except Exception as e:
+                logging.error(f"[Listener] Error: {e}")
+                self._have_client = False
+                time.sleep(0.1)
 
     def __encode(self, message: OutMessage) -> bytes:
         '''
         Encodes the outgoing message into the required sendable format
         @param message: The message to encode
         '''
-        return (message.data + "\n").encode()
+        payload = f"{message.data}{self.MESSAGE_DELIMITER}"
+        return payload.encode()
 
     def __encode_start_stop(self, message: StartStopTestMsg) -> bytes:
         '''
@@ -193,8 +196,7 @@ class WiFiCommunicator:
         Let's use: 'CMD:START' or 'CMD:STOP'
         '''
         cmd = 'START' if message.data else 'STOP'
-        return f'CMD:{cmd}'.encode()
-
+        return f"CMD:{cmd}{self.MESSAGE_DELIMITER}".encode()
 
     def __sender_thread(self):
         '''
@@ -209,13 +211,18 @@ class WiFiCommunicator:
             # First try to get a normal message
             try:
                 msg = self._outgoing_messages_queue.get(timeout=0.05)
-                self._client.send(self.__encode(msg))
+                self._client.sendall(self.__encode(msg))
+            except Empty:
+                pass
             except Exception as e:
-                print(f"Sender - Error sending message: {e}")  # no regular message available
-
+                logging.error(f"Sender - Error sending message: {e}")  # no regular message available
+                self._have_client = False
             # Then try to get a start/stop message
             try:
                 ss_msg = self._start_stop_messages_queue.get_nowait()
                 self._client.send(self.__encode_start_stop(ss_msg))
+            except Empty:
+                pass
             except Exception as e:
-                print(f"Sender - Error sending start/stop message: {e}") # no start/stop message available
+                logging.error(f"Sender - Error sending start/stop message: {e}") # no start/stop message available
+                self._have_client = False

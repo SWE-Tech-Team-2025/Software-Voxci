@@ -1,4 +1,13 @@
 /* 
+ * Communication code for the ESP 32 side. Inspired by the author stated in the
+ * next header. Feel free to reference his GitHub for documentation, but I will
+ * provide documentation in depth in the code and otherwise to help 
+ * maintainability
+ *
+ * Author: Samantha Raby
+ */
+
+/* 
  * -----------------------------------------------------------------------------
  * Example: Two way communication between ESP32 and Python using WIFI
  * -----------------------------------------------------------------------------
