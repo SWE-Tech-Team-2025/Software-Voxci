@@ -43,14 +43,24 @@ static WiFiClient _client;
   Attempt to connect the client
 */
 void connect_client(){
+  Serial.println("[WiFi] Attempting to connect to the computer");
   // We have to connect, no other options
-  while(!_client.connect(SERVER_ADDRESS, SERVER_PORT)){ delay(1000); }
+  while(!_client.connect(SERVER_ADDRESS, SERVER_PORT)){ 
+    Serial.print(".");
+    delay(1000);
+  }
+  Serial.println("\n[WiFi] Connection successful");
 }
 
 bool is_client_connected(){
   return _client.connected();
 }
 
+void reconnect() {
+  if (!client.connected()) {
+    Serial.println("[WiFi] Conection lost. Reconnecting now");
+  }
+}
 
 void send_message(char *msg){
   xQueueSend(_send_q, (void*)msg, 5);
@@ -75,8 +85,12 @@ static void sender_task(void*){
   while(1){
     // Wait for a notification to do anything
     if(xQueueReceive(_send_q, (void*)&buff, 5) == pdTRUE){
+      reconnect();
       _client.print(buff);
+      Serial.print("[Sender] Sent: ");
+      Serial.println(buff);
     }
+    delay(10);
   }
 }
 
