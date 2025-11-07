@@ -206,6 +206,12 @@ function App() {
               data={graphData}
               options={{
                 responsive: true,
+                plugins: {
+                  legend: {
+                  display: true,
+                  onClick: null, // Completely disable click events
+                  },
+                },
                 scales: {
                   x: {
                     title: {

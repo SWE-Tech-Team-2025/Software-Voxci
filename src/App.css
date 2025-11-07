@@ -59,7 +59,7 @@ body {
 
 /* Light Blue Box */
 .input-box {
-  background-color: #e6f7ff; /* Light blue background */
+  background-color: #d6f2ff; /* Light blue background */
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -189,7 +189,7 @@ body {
 }
 
 .graph-box {
-  background-color: #e6f7ff;
+  background-color: #d6f2ff;
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
