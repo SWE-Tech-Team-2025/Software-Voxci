@@ -2,6 +2,7 @@ from esp32_wifi_communicator import WiFiCommunicator
 from database_comm import DataBaseComm
 from excel_export import Exporter
 import uuid
+import pydantic
 from fastapi import FastAPI
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Depends, HTTPException
@@ -12,8 +13,8 @@ from jwt import encode as jwt_encode
 
 class Main:
     curr_chip_id = "empty"
-    communicator = WiFiCommunicator(max_buffer_sz=128)
-    database_comm = DataBaseComm()
+    communicator = None
+    database_comm = None
     def new_die(self)-> str:
         curr_chip_id = uuid4()
         database_comm.dies.create_die(curr_chip_id)
@@ -28,12 +29,11 @@ class Main:
     
 
     def main():
-
+        communicator = WiFiCommunicator(max_buffer_sz=128)
+        database_comm = DataBaseComm()
         return
 
     def run():
-        
-        main()
         return       
 
 # class CreateDieInput(BaseModel):

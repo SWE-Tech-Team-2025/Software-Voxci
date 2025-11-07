@@ -1,4 +1,6 @@
 import os
+import pydantic
+import fastapi
 from pydantic import BaseModel
 from pymongo import MongoClient
 from dotenv import load_dotenv
