@@ -95,56 +95,50 @@ static void sender_task(void*){
 }
 
 /*
-  This task would wait for data to be present, and signal that something has been received
+  One large tast to handle all the incoming messages from the PC
 */
-static void receiver_task(void*){
+static void receiver_task(void *){
   // Unless conneted to the client, no need for this to run
   xSemaphoreTake(_recv_tsk_mutex, portMAX_DELAY);
 
   char buf[MAX_BUFFER_LEN] = {0};
+
   while(1){
+    reconnect();
     // wait until data is available
-    while(_client.available() <= 0){ delay(100); };
+    if (_client.available()) {
+      int idx = 0;
+      char ch;
 
-    // if here, then we have data to read
-    for(uint8_t i = 0; i < _client.available(); i++){ buf[i] = (char)_client.read(); };
+      // Read until the newline character or until the buffer is full
+      while(_client.available() && idx < MAX_BUFFER_LEN - 1) {
+        ch = _client.read();
+        if (ch == '\n') break;
+        buf[idx++] = ch;
+      }
+      buf[idx] = '\0' //Null terminate the buffer
 
-    // Add message to the received messages queue
-    xQueueSend(_recv_q, (void*)&buf, 5);
-  }
-}
+      Serial.print("[Receiver] Received: ");
+      Serial.println(buf);
 
-/*
-  Task for StartStop messages
-*/
-static void st_stp_receiver_task(void*) {
-
-  xSemaphoreTake(_startstop_tsk_mutex, portMAX_DELAY);
-
-  char buf[MAX_BUFFER_LEN] = {0};
-
-  while(1) {
-
-    while(_client.available() <= 0) {
-      delay(100);
-    }
-
-    for(uint8_t i = 0; i < _client.available(); i++) {
-      buf[i] = (char)_client.read();
-    }
-
-    if (strncmp(buf, "CMD:START", 9) == 0) {
-    bool val = true;
-    xQueueSend(_startstop_q, &val, 5);
-    }
-    else if (strncmp(buf, "CMD:STOP", 8) == 0) {
-        bool val = false;
+      // For start/stop commands 
+      if (strncmp(buf, "CMD:START", 9) == 0) {
+        bool val - true;
         xQueueSend(_startstop_q, &val, 5);
-    }
-    else {
+        Serial.println("[Receiver] Start command received");
+      } else if (strncmp(buf, "CMD:STOP", 8) == 0) {
+        bool val = false;
+        xQueueSend()_startstop_q, &val, 5;
+        Serial.println("[Receiver] Stop command received");
+      } else if (buf[0] == 'A') { // Handle ACK-prefixed messages
+        Serial.print("[Receiver] ACK received");
+        Serial.print(&buf[1]);
+        xQueueSend(_recv_q, &buf[1], 5);
+      } else { //Our regular message, i.e. data like voltage sweep ranges
         xQueueSend(_recv_q, &buf, 5);
+      }
     }
-
+    delay(50); // Prevent CPU Hogging with this small delay
   }
 }
 
@@ -154,10 +148,10 @@ static void st_stp_receiver_task(void*) {
 void setup_wifi_communicator(){
   _send_q = xQueueCreate(QUEUE_LEN, MAX_BUFFER_LEN);
   _recv_q = xQueueCreate(QUEUE_LEN, MAX_BUFFER_LEN);
-  _startstop_q = xQueueCreate(QUEUE_LEN, MAX_BUFFER_LEN);
+  _startstop_q = xQueueCreate(QUEUE_LEN, sizeof(bool));
+
   _recv_tsk_mutex = xSemaphoreCreateMutex();
   _send_tsk_mutex = xSemaphoreCreateMutex();
-  _startstop_tsk_mutex = xSemaphoreCreateMutex();
     
   // block both tasks once created for them to wait for the client to connect
   xSemaphoreTake(_send_tsk_mutex, portMAX_DELAY);
@@ -167,12 +161,12 @@ void setup_wifi_communicator(){
   xTaskCreatePinnedToCore(sender_task, "sendTask", 4096, NULL, 3, NULL, 1);
   xTaskCreatePinnedToCore(receiver_task, "receiveTask", 4096, NULL, 3, NULL, 1);
 
+  // Connect before releasing the tasks
   connect_client();
 
   // release tasks
   xSemaphoreGive(_send_tsk_mutex);
   xSemaphoreGive(_recv_tsk_mutex);
-  xSemaphoreGive(_startstop_tsk_mutex);
 }
 
 #endif // __WIFI_COMMUNICATOR_H__
