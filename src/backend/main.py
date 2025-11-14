@@ -10,6 +10,7 @@ from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 import jwt
 from jwt import encode as jwt_encode
+import logging
 
 class Main:
     curr_chip_id = "empty"
@@ -31,6 +32,8 @@ class Main:
     def main():
         communicator = WiFiCommunicator(max_buffer_sz=128)
         database_comm = DataBaseComm()
+        logging.info("[Startup] Starting Application.....")
+        
         return
 
     def run():
