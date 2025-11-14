@@ -32,6 +32,9 @@ class Main:
     def main():
         communicator = WiFiCommunicator(max_buffer_sz=128)
         database_comm = DataBaseComm()
+
+        app = FastAPI()
+        
         logging.info("[Startup] Starting Application.....")
         
         return
