@@ -46,9 +46,10 @@ def start_fastapi():
     command = ["uvicorn", "app:app", "--reload", "--port", "8000"]
     p = subprocess.Popen(
         command,
-        cwd=REACT_DIR,
+        cwd=BACKEND_DIR,
         shell=(os.name == "nt")
     )
+    processes.append(p)
 
 def shutdown(*args):
     logging.info("\nShutting down all processes")

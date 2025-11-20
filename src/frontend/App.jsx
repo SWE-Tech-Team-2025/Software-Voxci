@@ -124,6 +124,18 @@ function App() {
     });
   };
 
+  const handleShutdown = async () => {
+    if (window.confirm("Are you sure you want to shutdown the application?")) {
+      try {
+        await fetch("http://localhost:8000/shutdown", {
+          method: "POST",
+        });
+      } catch (error) {
+        console.log("Shutdown initiated");
+      }
+    }
+  };
+
   return (
     <div className="App">
       {/* Blue Bar at the Top */}
@@ -194,6 +206,7 @@ function App() {
                 <button onClick={handleStart} className="control-button">Start</button>
                 <button onClick={handleViewExcel} className="control-button">View Excel</button>
                 <button onClick={handleClearGraph} className="control-button">Clear Graph</button>
+                <button onClick={handleShutdown} className="control-button">Shutdown</button>
               </div>
             </div>
           </div>
