@@ -6,7 +6,7 @@ from queue import Queue, Empty
 
 
 class InMessage:
-    '''3
+    '''
     Incoming Message definition
     NOTE: This is created so that you can add as many flags as you want,
     without changing the interface, and you'd only need to chance the decoding method

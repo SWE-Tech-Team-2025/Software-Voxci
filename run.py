@@ -34,21 +34,25 @@ Starts up the React frontend to be called by the open_browser
 function
 '''
 def start_react():
-    command = ["npm", "start"]
-    
-    # Windows: shell=True 
-    p = subprocess.Popen(command, cwd = REACT_DIR, shell=(os.name == "nt"))
-    processes.append(p)
+    # Runs if the environment is Windows
+    if os.name == "nt":
+        command = "npm start"
+        p = subprocess.Popen(command, cwd=REACT_DIR, shell=True)
+    # MacOS and Linux (developer runs Linux :))
+    else:
+        command = ["npm", "start"]
+        p = subprocess.Popen(command, cwd = REACT_DIR)
+        processes.append(p)
 '''
 Starts up FastAPI so the frontend and backend can communicate
 '''
 def start_fastapi():
-    command = ["uvicorn", "app:app", "--reload", "--port", "8000"]
-    p = subprocess.Popen(
-        command,
-        cwd=BACKEND_DIR,
-        shell=(os.name == "nt")
-    )
+    if os.name == "nt":
+        command = "python -m uvicorn main:app --port 8000"
+        p = subprocess.Popen(command, cwd=BACKEND_DIR, shell=True)
+    else:         
+        command = ["uvicorn", "main:app", "--port", "8000"]
+        p = subprocess.Popen(command,cwd=BACKEND_DIR)
     processes.append(p)
 
 def shutdown(*args):
