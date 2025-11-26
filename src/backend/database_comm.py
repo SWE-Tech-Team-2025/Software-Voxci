@@ -1,3 +1,7 @@
+# Database communication code for a MongoDB instance. Works for a local instance
+# and for cloud instances. The only thing needing to be changed in either case is
+# the .env file
+
 import os
 import pydantic
 import fastapi
@@ -10,8 +14,9 @@ from datetime import datetime
 class DataBaseComm:
 
     '''
-    TODO: Complete implementation for the database communicator so we can read and write
-    data to the database as we get it from the ESP32
+    Implementation for the database communication. Handles creating and getting
+    dies from the database as well as adding the individual sweeps to each die
+    as testing is ongoing. 
     '''
 
     def __init__(self) -> None:
@@ -27,32 +32,29 @@ class DataBaseComm:
         self.db = client["data"]
         self.dies = db["dies"]
         self.die_sweeps = db["die_sweeps"]
-
-    # Example of searching the database for a specific object or field
-    # print(collection.insert_one({"name" : "Samantha"}))
-    # for die in collection.find({"name" : "Samantha"}):
-    #     print(die)
     
-    # Creates a die input in the database
+    # Creates a die input in the database. Each die has a UUID attached to it
     def create_die(self, die_id : str) -> None:
         dies.insert_one({"ID" : die_id, "currtestnum" : 1})
 
-    # Fetches a die from the database
+    # Fetches a die from the database by searching for the UUID
     def get_die(self, die_id : str) -> None:
         return dies.find({"ID" : die_id})
 
-    # Increments testnum for a specific die
+    # Increments testnum for a die given the UUID. The testnum is incremented when
+    # a new test is done on the die
     def increment_die_testnum(self, die_id : str) -> None:
         die_query = {"ID" : die_id}
         die_new_test_val = {"inc" : {"currtestnum" : 1}}
         dies.update_one(die_query, die_new_test_val)
 
-    # Returns the specified die's testnum for use in generating sweeps
+    # Returns the specified die's testnum for use in generating sweeps so that the 
+    # sweeps for one test can be distinguished from another test
     def get_die_testnum(self, die_id : str) -> int:
         die = dies.find_one({"ID" : die_id})
         return die["currtestnum"] if die else None
 
-    # Fetches all sweeps from the database that correspond to the die id
+    # Fetches all sweeps from the database that correspond to the die id and testnum
     def get_die_sweeps(self, die_id, test_num) -> list:
         die_sweeps_list = list()
         for die_sweep in die_sweeps.find({"ID" : die_id, "testnum" : test_num}):

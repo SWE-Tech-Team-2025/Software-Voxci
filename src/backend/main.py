@@ -25,20 +25,12 @@ class Main:
 
     def export_Die(self, die_id : str, test_num : int) -> None:
         write_data(die_id, test_num)
-        
-    def connect_esp32(self, ip_addr : str) -> bool:
-        
-        return true # TODO: Change this
-    
 
-    def main():
-        communicator = WiFiCommunicator(max_buffer_sz=128)
+    def run():
+        communicator = WiFiCommunicator(max_buffer_sz=256)
         database_comm = DataBaseComm()
         app = FastAPI()
 
         logging.info("[Startup] Starting Application.....")
-
-        return
-
-    def run():
+        
         return

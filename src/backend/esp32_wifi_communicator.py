@@ -87,7 +87,7 @@ class WiFiCommunicator:
         self._soc.bind(('0.0.0.0', port))
         self._soc.listen(0)
 
-        # Start the show
+        # Start the communication threads
         self._threads = [
             threading.Thread(target=self.__listener_thread, daemon=True),
             threading.Thread(target=self.__sender_thread, daemon=True),
@@ -96,30 +96,30 @@ class WiFiCommunicator:
         for thread in self._threads:
             thread.start()
 
+    '''
+    Returns (if exists) a message from the incoming messages queue
+    '''
     def get_message(self) -> InMessage:
-        '''
-        Returns (if exists) a message from the incoming messages queue
-        '''
         return self._incoming_messages_queue.get()
-
+    
+    '''
+    Adds a message to the sending queue to be sent
+    @param message: The message to be sent to the ESP32
+    '''
     def send_message(self, message: OutMessage) -> None:
-        '''
-        Adds a message to the sending queue to be sent
-        @param message: The message to be sent to the ESP32
-        '''
         self._outgoing_messages_queue.put(message)
         
+    '''
+    Tells the ESP32 to start or stop the tests
+    @param message: The start/stop message to be sent to the ESP32
+    '''
     def send_start_stop(self, message: StartStopTestMsg) -> None:
-        '''
-        Tells the ESP32 to start or stop the tests
-        @param message: The start/stop message to be sent to the ESP32
-        '''
         self._start_stop_messages_queue.put(message)
 
+    '''
+    Destroy the communicator
+    '''
     def destroy(self):
-        '''
-        Destroy the communicator
-        '''
         self._rip = True
         if self._client is not None:
             self._client.close()
@@ -128,11 +128,11 @@ class WiFiCommunicator:
         for thread in self._threads:
             thread.join(timeout=1)
 
+    '''
+    Establish a connection with a client, and die
+    @param soc: socket to use to establish communication with
+    '''
     def __wait_for_connection_thread(self) -> None:
-        '''
-        Establish a connection with a client, and die
-        @param soc: socket to use to establish communication with
-        '''
         while not self._rip:
             logging.info("Waiting for ESP32 to connect....")
             try: 
@@ -144,11 +144,11 @@ class WiFiCommunicator:
                 logging.error(f"Error accepting client: {e}")
                 time.sleep(1)
 
+    '''
+    Decodes the incoming message to the required format
+    @param in_bytes: The bytes that make up the message to decode
+    '''
     def __decode(self, message: str) -> 'None|InMessage':
-        '''
-        Decodes the incoming message to the required format
-        @param in_bytes: The bytes that make up the message to decode
-        '''
         if not message:
             return None
 
@@ -182,27 +182,27 @@ class WiFiCommunicator:
                 self._have_client = False
                 time.sleep(0.1)
 
+    '''
+    Encodes the outgoing message into the required sendable format
+    @param message: The message to encode
+    '''
     def __encode(self, message: OutMessage) -> bytes:
-        '''
-        Encodes the outgoing message into the required sendable format
-        @param message: The message to encode
-        '''
         payload = f"{message.data}{self.MESSAGE_DELIMITER}"
         return payload.encode()
 
+    '''
+    Encodes the Start/Stop message into a special format for ESP32 to interpret
+    Uses 'CMD:START' or 'CMD:STOP'
+    '''
     def __encode_start_stop(self, message: StartStopTestMsg) -> bytes:
-        '''
-        Encodes the Start/Stop message into a special format for ESP32 to interpret
-        Let's use: 'CMD:START' or 'CMD:STOP'
-        '''
         cmd = 'START' if message.data else 'STOP'
         return f"CMD:{cmd}{self.MESSAGE_DELIMITER}".encode()
 
+    '''
+    Handling for outgoing messages. Handles both outgoing messages
+    and start_stop messages
+    '''
     def __sender_thread(self):
-        '''
-        Handling for outgoing messages. Handles both outgoing messages
-        and start_stop messages
-        '''
         while not self._rip:
             if not self._have_client:
                 time.sleep(self.CPU_RELEASE_SLEEP)
