@@ -6,7 +6,9 @@ class Exporter:
     
     '''
     Class definition for the Excel Exporter. 
-    TODO: Make sure code integrates well 
+    The Exporter exports all data in a test for a die into an Excel 
+    spreadsheet. Creates a table without headings with all the data 
+    on each sweep, the time, voltage, humidity, capacitance, and temperature. 
     '''
 
     def write_data(self, chip_id: str, test_num: int): # test_num -1 if all tests requested

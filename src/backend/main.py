@@ -9,7 +9,6 @@ from fastapi import Depends, HTTPException
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 import jwt
-from jwt import encode as jwt_encode
 import logging
 import os
 import signal

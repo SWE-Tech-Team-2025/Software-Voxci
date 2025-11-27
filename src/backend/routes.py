@@ -1,9 +1,38 @@
 from fastapi import APIRouter
-from services import process_data
+from pydantic import BaseModel
+import services
+import esp32_wifi_communicator
+import main
+import shutdown
 
 router = APIRouter()
 
-class CreateDieInput(BaseModel):
+class Inputs(BaseModel):
+    freq: float
+    voltage: float
+    
+@router.post("/start")
+def start(data: Inputs):
+    send_start_stop('START')
+    return
+
+@router.post("/stop")
+def stop(data: Inputs):
+    send_start_stop('STOP')
+    return
+
+@router.post("/excel")
+def export(data: Inputs):
+    test_num = database_comm.dies.get_die_testnum(curr_chip_id)
+    write_data(curr_chip_id, test_num)
+    return
+
+@router.post("/shutdown")
+def shutdown(data: Inputs):
+    shutdown()
+    return
+
+""" class CreateDieInput(BaseModel):
     id: str
     name: str
 
@@ -59,4 +88,4 @@ class CreateDieInput(BaseModel):
     # Deletes all sweeps
     @app.delete("/dies/{die_id}")
     def delete_die(die_id: str):
-        return {"Hello": "World"}
+        return {"Hello": "World"} """

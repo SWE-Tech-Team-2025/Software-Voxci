@@ -6,6 +6,7 @@ import webbrowser
 import sys
 import os
 import logging
+from backend.shutdown import setprocesses
 
 BASE_DIR = os.getcwd()
 SRC_DIR = os.path.join(BASE_DIR, "src")
@@ -76,6 +77,9 @@ if __name__ == "__main__":
 
     logging.info("[Startup] Starting FastAPI")
     threading.Thread(target=start_fastapi).start()
+
+    logging.info("[Info] Sending processes to shared function")
+    shutdown.setprocesses(processes)
 
     print("Frontend located at http://localhost:3000, window should have launched.")
 

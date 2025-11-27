@@ -114,7 +114,7 @@ class WiFiCommunicator:
     @param message: The start/stop message to be sent to the ESP32
     '''
     def send_start_stop(self, message: StartStopTestMsg) -> None:
-        self._start_stop_messages_queue.put(message)
+        self._start_stop_messages_queue.put(__encode_start_stop(message))
 
     '''
     Destroy the communicator
