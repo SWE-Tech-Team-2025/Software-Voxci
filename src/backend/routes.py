@@ -10,23 +10,36 @@ router = APIRouter()
 class Inputs(BaseModel):
     freq: float
     voltage: float
-    
+
+# Routing for the start button in the UI to send the message
+# to start the test on the hardware side
 @router.post("/start")
 def start(data: Inputs):
-    send_start_stop('START')
+    freq = OutMessage(data.freq, False, False)
+    send_message(freq)
+
+    volt = OutMessage(data.voltage, True, False)
+    send_message(volt)
+
+    send_start_stop(StartStopTestMsg(True, False))
     return
 
+# Routing for the stop button in the UI to send the message
+# to stop the test on the hardware side
 @router.post("/stop")
 def stop(data: Inputs):
-    send_start_stop('STOP')
+    send_start_stop(StartStopTestMsg(False, False))
     return
 
+# Routing for the export button to tell the backend to export the
+# die and its sweeps to Excel
 @router.post("/excel")
 def export(data: Inputs):
     test_num = database_comm.dies.get_die_testnum(curr_chip_id)
     write_data(curr_chip_id, test_num)
     return
 
+# Routing to send the shutdown message and shutdown the application
 @router.post("/shutdown")
 def shutdown(data: Inputs):
     shutdown()

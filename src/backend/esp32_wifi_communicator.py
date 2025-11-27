@@ -26,7 +26,7 @@ class OutMessage:
     NOTE: This is created so that you can add as many flags as you want,
     without changing the interface, and you'd only need to chance the encoding method
     Initializes the outgoing message for the ESP32 to be added to the outgoing message queue
-    @param type_of_message: true for voltage range, false for voltage increment value
+    @param type_of_message: True for voltage range, False for frequency
     '''
     def __init__(self, data, type_of_message: bool, require_ack: bool = False) -> None:
         self.data = data
