@@ -16,8 +16,10 @@ dependencies = [
     "dotenv (>=0.9.9,<0.10.0)",
     "services (>=0.1.1,<0.2.0)"
 ]
+
+[tool.poetry]
 packages = [
-    {include = "backend", from = "src" }
+    { include = "backend", from = "src" }
 ]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
