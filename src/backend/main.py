@@ -1,6 +1,7 @@
 from esp32_wifi_communicator import WiFiCommunicator
-from database_comm import DataBaseComm
-from excel_export import Exporter
+from backend.database_comm import DataBaseComm
+from backend.excel_export import Exporter
+from backend.routes import router
 import uuid
 import pydantic
 from fastapi import FastAPI
@@ -13,10 +14,13 @@ import logging
 import os
 import signal
 
+app = FastAPI()
+
 class Main:
     curr_chip_id = "empty"
     communicator = None
     database_comm = None
+
     def new_die(self)-> str:
         curr_chip_id = uuid4()
         database_comm.dies.create_die(curr_chip_id)
@@ -28,7 +32,8 @@ class Main:
     def run():
         communicator = WiFiCommunicator(max_buffer_sz=256)
         database_comm = DataBaseComm()
-        app = FastAPI()
+
+        app.include_router(router)
 
         logging.info("[Startup] Starting Application.....")
         

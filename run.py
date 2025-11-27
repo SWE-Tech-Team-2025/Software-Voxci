@@ -6,7 +6,7 @@ import webbrowser
 import sys
 import os
 import logging
-from backend.shutdown import setprocesses
+from backend.shared_shutdown import setprocesses
 
 BASE_DIR = os.getcwd()
 SRC_DIR = os.path.join(BASE_DIR, "src")
@@ -37,11 +37,11 @@ function
 def start_react():
     # Runs if the environment is Windows
     if os.name == "nt":
-        command = "npm start"
+        command = "npm run dev"
         p = subprocess.Popen(command, cwd=REACT_DIR, shell=True)
     # MacOS and Linux (developer runs Linux :))
     else:
-        command = ["npm", "start"]
+        command = ["npm", "run", "dev"]
         p = subprocess.Popen(command, cwd = REACT_DIR)
         processes.append(p)
 '''
@@ -49,10 +49,10 @@ Starts up FastAPI so the frontend and backend can communicate
 '''
 def start_fastapi():
     if os.name == "nt":
-        command = "python -m uvicorn main:app --port 8000"
+        command = "python -m uvicorn backend.main:app --port 8000"
         p = subprocess.Popen(command, cwd=BACKEND_DIR, shell=True)
     else:         
-        command = ["uvicorn", "main:app", "--port", "8000"]
+        command = ["uvicorn", "backend.main:app", "--port", "8000"]
         p = subprocess.Popen(command,cwd=BACKEND_DIR)
     processes.append(p)
 
@@ -71,17 +71,18 @@ if __name__ == "__main__":
     logging.info("[Startup] Starting React dev")
     threading.Thread(target=start_react).start()
     
-    threading.Thread(target=open_browser, args = ("http://localhost:3000",)).start()
+    threading.Thread(target=open_browser, args = ("http://localhost:5173",)).start()
 
     time.sleep(1.5)
 
     logging.info("[Startup] Starting FastAPI")
     threading.Thread(target=start_fastapi).start()
 
-    logging.info("[Info] Sending processes to shared function")
-    shutdown.setprocesses(processes)
 
-    print("Frontend located at http://localhost:3000, window should have launched.")
+    logging.info("[Info] Sending processes to shared function")
+    setprocesses(processes)
+
+    print("Frontend located at http://localhost:5173, window should have launched.")
 
     while True:
         time.sleep(1)

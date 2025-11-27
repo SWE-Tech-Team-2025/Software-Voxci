@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 import services
 import backend.esp32_wifi_communicator
-import backend.shutdown
+import backend.shared_shutdown
 import backend.database_comm
 
 router = APIRouter()
