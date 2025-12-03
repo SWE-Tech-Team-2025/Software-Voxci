@@ -84,5 +84,7 @@ if __name__ == "__main__":
 
     print("Frontend located at http://localhost:5173, window should have launched.")
 
+    # Here we would want to call main.run() to start the backend code running
+
     while True:
         time.sleep(1)
