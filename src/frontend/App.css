@@ -182,10 +182,11 @@ body {
 .graph-container {
   flex: 2;
   padding: 1rem;
-  display: flex; 
+  display: flex;
   flex-direction: column;
-  overflow-y: auto; 
-  max-height: calc(100vh - 25px); 
+  overflow-y: auto;
+  max-height: calc(100vh - 25px);
+  min-width: 0; /* Prevent flex items from overflowing */
 }
 
 .graph-box {
@@ -194,6 +195,8 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
+  position: relative; /* Establish containing block */
+  width: 100%; /* Prevent width changes */
 }
 
 .table-container {

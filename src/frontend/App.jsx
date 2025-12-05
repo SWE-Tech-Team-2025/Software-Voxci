@@ -30,14 +30,7 @@ function App() {
   const [voltage, setVoltage] = useState(100); // Default voltage in V
   const [graphData, setGraphData] = useState({
     labels: [], // X-axis: Voltage
-    datasets: [
-      {
-        label: "Capacitance vs Voltage",
-        data: [], // Y-axis: Capacitance
-        borderColor: "rgba(75, 192, 192, 1)",
-        fill: false,
-      },
-    ],
+    datasets: [], // Start with no datasets
   });
   const [dataHistory, setDataHistory] = useState([]); // Store history of all runs
 
@@ -219,11 +212,21 @@ function App() {
               data={graphData}
               options={{
                 responsive: true,
+                maintainAspectRatio: true,
                 plugins: {
                   legend: {
-                  display: true,
-                  onClick: () => false, // Prevent default legend click behavior
+                    display: true,
+                    onClick: (e) => {
+                      // Completely prevent any legend interaction
+                      e.stopPropagation();
+                      e.preventDefault();
+                      return false;
+                    },
                   },
+                },
+                interaction: {
+                  mode: 'index',
+                  intersect: false,
                 },
                 scales: {
                   x: {
