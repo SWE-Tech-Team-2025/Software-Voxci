@@ -16,14 +16,14 @@ class Exporter:
         workbook = xlsxwriter.Workbook(chip_id + '.xlsx')  
 
         if test_num == -1: # if all tests are wanted
-            for i in range(test_num):
+            for i in range(get_die_testnum(chip_id)):
 
-                worksheet = workbook.add_worksheet(test_num) # worksheet is named by test number
+                worksheet = workbook.add_worksheet(i) # worksheet is named by test number
 
-                sweeps = get_die_sweeps(chip_id, test_num)
+                sweeps = get_die_sweeps(chip_id, i)
 
                 worksheet.write('A1', 'Chip ID: ' + chip_id)
-                worksheet.write('B1', 'Test Number' + test_num)
+                worksheet.write('B1', 'Test Number' + i)
 
                 for sweep in (sweeps):
 
@@ -52,8 +52,6 @@ class Exporter:
                         worksheet.write(row, col, variable)
                         worksheet.write(row, col + 1, data)
                         row += 1
-
-                test_num += 1 #increase the test number to look at the next test
             
             workbook.close()
 

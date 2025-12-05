@@ -57,9 +57,21 @@ class DataBaseComm:
     # Fetches all sweeps from the database that correspond to the die id and testnum
     def get_die_sweeps(self, die_id, test_num) -> list:
         die_sweeps_list = list()
-        for die_sweep in die_sweeps.find({"ID" : die_id, "testnum" : test_num}):
-            die_sweeps_list.append(die_sweep)
+
+        # If test_num == -1, we want all of the sweeps associated with the die
+        if test_num == -1:
+            # Get current die number
+            num = get_die_testnum({"ID": die_id})
+            # Get all sweeps for the die ID
+            for i in range(num):
+                for die_sweep in die_sweeps.find({"ID" : die_id, "testnum" : num}):
+                    die_sweeps_list.append(die_sweep)
+        else: 
+            # Get all sweeps for a specified die ID and test_num
+            for die_sweep in die_sweeps.find({"ID" : die_id, "testnum" : test_num}):
+                die_sweeps_list.append(die_sweep)
         return die_sweeps_list
+    
     
     # Creates a new sweep for the die and adds it to the database
     def create_die_sweep(self, die_id : str, test_num : int, sweep_voltage : float, sweep_humidity : float, sweep_temp : float, sweep_capacitance : float) -> None:

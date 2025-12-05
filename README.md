@@ -7,7 +7,7 @@ This is a desktop application to communicate with the testing device provided by
 
 ### Prerequisites
 
-Both npm and poetry are required to run this application. Poetry is the Python package manager in use for this program, while npm installs all the frontend packages. For the ESP32, installing the Arduino IDE is needed to flash the code to the ESP32, and the CP210x USB drivers to be able to enable the ESP32 in the Arduino IDE. 
+Both npm and poetry are required to run this application. Poetry is the Python package manager in use for this program, while npm installs all the frontend packages. For the ESP32, installing the Arduino IDE is needed to flash the code to the ESP32, and the CP210x USB drivers to be able to enable the ESP32 in the Arduino IDE. The data for the application is stored in a MongoDB instance, either an online Atlas instance or a local run instance on the host machine. All of these need to be set up for the application to fully do the job. 
 
 #### Installation
 
@@ -43,7 +43,7 @@ pacman -S npm
 
 The Windows and MacOS installation can be found at the Arduino website here: https://www.arduino.cc/en/software/
 
-On Linux, this can be installed at the same website with an AppImage or you can find the package in your distro package manager and install it that way. 
+On Linux, this can be installed at the same website with an AppImage or you can find the package in your distro package manager and install it that way. It may also already be included in the kernel, and to check, just see if the board shows up in the Arduino IDE when you plug it in.
 
 The CP210x USB drivers need to be installed in order for the IDE to find the ESP32 once plugged in. The install for Windows and MacOS can be found and installed here:
 
@@ -52,6 +52,27 @@ https://www.silabs.com/software-and-tools/usb-to-uart-bridge-vcp-drivers?tab=dow
 Along with that, in the Arduino IDE, manage libraries by going to Tools/Board/Board Manager and search for the esp32 package by Espressif and install it. 
 
  In many distros of Linux, the package already exists and doesn't require more packages to install. If the IDE can find the port the board is plugged into, then all you need is the esp32 package in the board manager.
+
+##### MongoDB
+
+To install MongoDB on the local host, follow installation instructions here: 
+
+https://www.mongodb.com/docs/manual/installation/  
+
+If local host isn't what you choose, just create an Atlas database on their website and follow the next steps. 
+
+For both of these options, all that needs to be done is the edition of the .env file, which contains the API key for the MongoDB instance. This must go in the src/backend folder in order for the database_comm.py to find the key. This should not be uploaded to the repository, as this is a security hole. 
+
+The .env contains the key in this format: 
+
+```
+MONGODB_URI=mongodb+srv://myUser:myPass123@mongodb0.example.com/
+```
+
+For the local install, you can find the key with the MongoDB Shell after starting the server. Just paste this key into the .env, and the code will find the database.
+
+For the Atlas instance, the key can be found in the management portal for the instance. This can be found by logging into the dashboard with your MongoDB user account.
+
 
 ### Poetry packages
 
@@ -128,10 +149,82 @@ Functionality is missing in the frontend to be able to change the die out and ge
 
 The graph in the GUI will show the live data during the test, but with the export button, this data will be exported to an Excel file that can be used for calculations for pass/fail.
 
-All of this functionality is untested as of 11/27/2025, but should be mostly working by 12/03/25. 
+All of this functionality is untested as of 11/27/2025. 
+
+## File Structure
+
+The code is organized into the following structure: 
+
+```
+src
+    backend
+        .env
+        backend files
+    frontend
+        frontend files
+esp32
+    esp32 files
+index.html
+run.py
+```
+
+The .env needs to be added after the MongoDB instance is set up. The routes are already set in the coding files, so all that needs to be done to run the program is to run  run.py. 
+
+### Backend
+
+The backend has these files: 
+
+```
+__init__.py
+database_comm.py
+esp_32_wifi_communicator.py
+excel_export.py
+main.py
+routes.py
+shared_shutdown.py
+```
+
+#### init.py:
+
+Used for routing for files. Can be ignored, but has to stay put.
+
+#### database_comm.py
+
+Manages all operations to and from the database. Adds die sweeps, dies, and can recall them for Excel exporting. 
+
+#### esp_32_wifi_communicator.py
+
+Manages the ESP32 connections and allows for messages to be sent by the code and received from the ESP32. Is called once to set up the connection and only runs when called.
+
+#### excel_export.py
+
+Takes input and finds every sweep associated with the unique die ID# and the test number, then adds it to an Excel file to export.
+
+#### main.py
+
+Runs the program after being called by run.py. Initializes the database communication and the ESP32 communucation. Also handles interrupts from routes.py and FastAPI
+
+#### routes.py
+
+Manages all the FastAPI routes, including stopping the test when the stop button is pressed, parsing input from the text boxes, and more.
+
+#### shared_shutdown.py
+
+Adds the shutdown implementation to shutdown the application when the UI calls the shutdown route in routes.py
+
+#### run.py
+
+Manages starting all services for the program. Starts FastAPI and React, opens the GUI in a new browser, and calls the backend code. Works across all platforms as it changes the executed code depending on the operating system.
+
+### Frontend
+
+
 
 ## Contact
 
-Samantha Raby: sraby4723@proton.me
+Samantha Raby  
+
+Email: jraby@wisc.edu  
+Personal Email: sraby4723@proton.me  
 
 Please contact me with any questions, I can also work on this with your team/developer if they need any help understanding parts of the code. Good luck, and I hope this code and the hardware helps!
