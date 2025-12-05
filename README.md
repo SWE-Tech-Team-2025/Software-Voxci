@@ -221,12 +221,21 @@ Manages starting all services for the program. Starts FastAPI and React, opens t
 The frontend has these files:
 
 ```
+index.html
 main.jsx
 App.jsx
 App.css
 style.css
 assets/
 ```
+
+#### index.html
+
+The main HTML file that serves as the entry point for the web application. Contains the basic HTML structure with:
+- Meta tags for character encoding and responsive viewport settings
+- Link to the global CSS file (index.css)
+- A root div element where the React application mounts
+- Script tag that loads the React application from main.jsx
 
 #### main.jsx
 
