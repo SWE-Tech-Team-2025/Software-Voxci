@@ -222,7 +222,7 @@ function App() {
                 plugins: {
                   legend: {
                   display: true,
-                  onClick: null, // Completely disable click events
+                  onClick: () => false, // Prevent default legend click behavior
                   },
                 },
                 scales: {
