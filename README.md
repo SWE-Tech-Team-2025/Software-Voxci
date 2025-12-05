@@ -218,6 +218,53 @@ Manages starting all services for the program. Starts FastAPI and React, opens t
 
 ### Frontend
 
+The frontend has these files:
+
+```
+main.jsx
+App.jsx
+App.css
+style.css
+assets/
+```
+
+#### main.jsx
+
+Entry point for the React application. Initializes the React root, renders the App component within React's StrictMode, and attaches it to the DOM element with id "root". This file sets up the entire frontend application.
+
+#### App.jsx
+
+Main React component that contains all the application logic and UI. Manages the state for frequency, voltage, graph data, and test run history. Implements the following functionality:
+- Input handling for voltage and frequency parameters with slider and text inputs
+- Start button to initiate tests and generate capacitance vs voltage data
+- Live graph rendering using Chart.js to display test results
+- Data history tracking for all test runs with timestamps
+- Excel export functionality to save test data to a spreadsheet file
+- Clear graph function to reset the display
+- Shutdown button to close the application via backend API call
+- Displays the Vocxi logo in the top navigation bar
+- Data history table showing run number, timestamp, frequency, and voltage for each test
+
+#### App.css
+
+Primary stylesheet for the application. Defines all the visual styling including:
+- Layout structure with flexbox for left panel (controls) and right panel (graph)
+- Blue top navigation bar with logo positioning
+- Light blue input boxes and graph containers with rounded corners and shadows
+- Input styling for frequency slider, voltage text input, and number inputs
+- Button styling with hover effects and consistent sizing
+- Graph container with responsive sizing and overflow handling
+- Data history table styling with alternating row colors and hover effects
+- Responsive design to maintain proper layout across different screen sizes
+
+#### style.css
+
+Contains Tailwind CSS imports. While Tailwind is installed and configured in the project, the current implementation uses custom CSS classes defined in App.css rather than Tailwind utility classes.
+
+#### assets/
+
+Directory containing static assets used by the frontend, primarily the Vocxi logo image (vocxi_logo.png) that appears in the top navigation bar.
+
 
 
 ## Contact
@@ -226,5 +273,9 @@ Samantha Raby
 
 Email: jraby@wisc.edu  
 Personal Email: sraby4723@proton.me  
+
+Sasha Nikitin
+Email: anikitin@wisc.edu
+Personal Email: volshebnik2014@gmail.com
 
 Please contact me with any questions, I can also work on this with your team/developer if they need any help understanding parts of the code. Good luck, and I hope this code and the hardware helps!
