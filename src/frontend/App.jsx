@@ -214,8 +214,24 @@ function App() {
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
+                  title: {
+                    display: true,
+                    text: 'Capacitance vs Voltage',
+                    font: {
+                      size: 18,
+                      weight: 'bold'
+                    }
+                  },
                   legend: {
                     display: true,
+                    position: 'bottom',
+                    labels: {
+                      usePointStyle: true,
+                      padding: 15,
+                      font: {
+                        size: 12
+                      }
+                    },
                     onClick: (e) => {
                       // Completely prevent any legend interaction
                       e.stopPropagation();

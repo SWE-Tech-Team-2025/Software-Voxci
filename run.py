@@ -39,6 +39,7 @@ def start_react():
     if os.name == "nt":
         command = "npm run dev"
         p = subprocess.Popen(command, cwd=REACT_DIR, shell=True)
+        processes.append(p)
     # MacOS and Linux (developer runs Linux :))
     else:
         command = ["npm", "run", "dev"]

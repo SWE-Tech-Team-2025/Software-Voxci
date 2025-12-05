@@ -4,6 +4,7 @@ import services
 import backend.esp32_wifi_communicator
 import backend.shared_shutdown
 import backend.database_comm
+import threading
 
 router = APIRouter()
 
@@ -41,9 +42,15 @@ def export(data: Inputs):
 
 # Routing to send the shutdown message and shutdown the application
 @router.post("/shutdown")
-def shutdown(data: Inputs):
-    shutdown()
-    return
+def shutdown_app():
+    # Delay shutdown to allow response to be sent
+    def delayed_shutdown():
+        import time
+        time.sleep(0.5)
+        backend.shared_shutdown.shutdown()
+
+    threading.Thread(target=delayed_shutdown).start()
+    return {"status": "shutting down"}
 
 """ class CreateDieInput(BaseModel):
     id: str
