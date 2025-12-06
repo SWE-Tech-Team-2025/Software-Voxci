@@ -194,7 +194,20 @@ Manages all operations to and from the database. Adds die sweeps, dies, and can 
 
 #### esp_32_wifi_communicator.py
 
-Manages the ESP32 connections and allows for messages to be sent by the code and received from the ESP32. Is called once to set up the connection and only runs when called.
+Manages the ESP32 connections and allows for messages to be sent by the code and received from the ESP32.  
+
+Outgoing messages come in two flavors:
+- OutMessage  
+    Every parameter sent to the hardware device such as the voltage range and the frequency  
+
+- StartStopTestMsg  
+    Sends the start/stop message to the hardware, when stop is called during a test, the test will halt in its tracks
+
+There is only one version of the incoming message, we are mostly dealing with incoming sweeps, and all this data is handled by the InMessage class.
+
+Along with that we also have encoding for each, and two handler methods,listener_thread and sender_thread. Both of these handle live messages and place them into the respective queues, which the code then dequeues and handles. 
+
+The buffer contains the text and data sent to the computer. It is set to 256 characters but can be changed for larger messages lengths.
 
 #### excel_export.py
 
